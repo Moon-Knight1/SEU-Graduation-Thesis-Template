@@ -3,7 +3,32 @@
 \usepackage{float}        % 支持 [H]（如果仍需要）
 \usepackage{placeins}     % 防止浮动体乱窜
 \usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
 \setlist[enumerate,1]{label=(\arabic*)}
+
+% 定制 Java 代码样式
+\lstset{
+	language=Java,
+	basicstyle=\ttfamily\small,
+	keywordstyle=\color{blue},
+	commentstyle=\color{gray},
+	stringstyle=\color{red},
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	stepnumber=1,
+	numbersep=5pt,
+	backgroundcolor=\color{gray!5},
+	frame=single,
+	rulecolor=\color{black!30},
+	breaklines=true,
+	breakatwhitespace=true,
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	tabsize=2,
+	captionpos=b           % 标题在下方
+}
 
 \newcommand{\demobox}[2]{\fbox{\rule{0pt}{#2}\rule{#1}{0pt}}}
 
