@@ -1,10 +1,20 @@
-\chapter{核心业务模块的详细设计与实现}
-第4章从整体架构、功能模块、主要流程等方面对系统进行了详细设计，明确了各模块的职责划分与技术方案。本章将在前述设计的基础上，围绕系统的核心功能模块，用时序图展示详细的设计。以数据库设计为切入点，依次介绍BU工时分析、项目管理、缺陷管理、重大问题管理等核心模块的实现细节。
+\chapter{核心业务模块的详细设计}
+上一个章节从整体架构、功能模块等层面对系统进行了宏观设计，明确了各模块的职责。在此基础上，本章将对系统的核心模块展开详细设计，将概要设计转化为可落地代码方案。本章从系统的各个模块和几个关键点设计出发，结合类图与时序图来解释类之间的关系以及核心方法的业务逻辑，为后续的系统实现与测试提供关键性的保障。
 
 \section{系统各模块设计}
-\FloatBarrier
+这个系统所有模块在工程上都采用了标准的Controller、Service、Mapper三层架构。Controller层定义接口的请求方式、请求路径以及请求参数等，负责与前端对接；Service层定义接口规范，在其实现类中编写核心业务代码进行数据处理；Mapper层与数据库进行交互，对于一些复杂的多表操作，由于 Mybatis-plus 只是提供了一些简单的单表操作，因此我们需要在xml文件中编写相应的SQL语句。对于数据查询操作，封装了查询请求基类 QueryRequest ，便于其他模块复用统一的分页（页号，页大小）与排序规则（排序字段、升序开关）属性，各个模块可以根据需求继承该类来扩展特定的业务查询维度。控制层在收到业务层的返回结果后，统一由 FebsResponse 包装后相应给前端。
+
 \subsection{BU工时投入分析}
 部门当月投入到各BU（业务单元）的工时分布，是企业管理人力资源调配的重要可视化视图。系统默认加载当前月份的公司整体BU工时饼图，用户可通过年份加月份、组织这两个维度进行筛选。点击某一BU模块后，下方区域将展示该BU的工时详情，包括总工时、平均工时、工时占比、加班工时及工时趋势等关键指标。这些指标数据为项目成本核算与业务决策提供了客观的数据支撑。
+
+如图\ref{fig:class-bu-hour}所示。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\linewidth]{imgs/class/BU工时类图.png}
+	\caption{BU工时统计类图}
+	\label{fig:class-bu-hour}
+\end{figure}
+在该类图中，WorkHourController通过@RestController注解定义了RESTful 风格的 API,之后再分别定义各个接口的请求方法和路径,接收前端传入的年份、月份、组织节点及 BU 名称等检索条件，为了避免接口参数的散乱以及提高代码的可读性与扩展性，将其统一封装为 WorkHourQueryDTO 数据传输对象。模块的核心业务存放在实现类WorkHourServiceImpl，该服务类中通过注解的方式注入了多个持久层对象：包括用于递归获取组织树的 OrgMapper、查询员工基础信息的 TbEmpBaseinfoMapper、获取项目信息的 PrjlistMapper，以及负责核心工时考勤数据的 WorkHourMapper。同时，考虑到工时报表数据具有典型的“读多写少”特性，业务层引入了 redisTemplate 组件来减少数据库的压力。
 
 BU工时分布统计的核心业务流转如图\ref{fig:seq-bu-hour-distribution}所示。
 \begin{figure}[htbp]
@@ -13,7 +23,7 @@ BU工时分布统计的核心业务流转如图\ref{fig:seq-bu-hour-distribution
 	\caption{BU工时饼图时序图}
 	\label{fig:seq-bu-hour-distribution}
 \end{figure}
-用户在前端选择查询的年月和组织节点后发起请求。后端业务层接收到请求后，首先查询Redis中是否存在对应的图表缓存数据，若命中则直接返回，以此分摊高频访问带来的数据库压力。若缓存未命中，系统首先调用 OrgMapper 递归获取目标组织及其所有子节点的 ID 集合，随后通过 EmployeeMapper 查询出这些节点下所有员工的 UID 列表。同时，针对前端传递的年月参数，考虑到数据库工时表记录的日期精确到天，为避免在 SQL 语句中使用日期格式化函数（如 DATE\_FORMAT）匹配从而引发索引失效问题，业务层会预先将年月参数转换为该月的起止时间范围（即月初第一天至月末最后一天）。接着，将时间参数和 UID 列表传入数据库，执行分组聚合查询，计算出各个BU的工时分布情况。最后，系统将该计算结果写入 Redis 并设置过期时间，将数据封装后返回给前端渲染分布饼图。
+用户在前端选择查询的年月和组织节点后发起请求。后端业务层接收到请求后，首先查询Redis中是否存在对应的图表缓存数据，若命中则直接返回，以此分摊高频访问带来的数据库压力。若缓存未命中，系统首先调用 OrgMapper 递归获取目标组织及其所有子节点的 ID 集合，随后通过 EmployeeMapper 查询出这些节点下所有员工的 UID 列表。同时，针对前端传递的年月参数，考虑到数据库工时表记录的日期精确到天，为避免在 SQL 语句中使用日期格式化函数（如 DATE\_FORMAT）匹配从而引发索引失效问题，业务层会预先将年月参数转换为该月的起止时间范围（即月初第一天至月末最后一天）。接着，将时间参数和 UID 列表传入数据库，调用执行分组聚合查询 WorkHourMapper ，计算出各个BU的工时分布情况。最后，系统将该计算结果写入 Redis 并设置过期时间，过期策略是当月数据一小时，其余时间24小时，将数据封装后返回给前端，利用Echarts组件来渲染分布饼图。
 
 针对单个BU工时详情的查询，其核心时序如图\ref{fig:seq-bu-hour-detail}所示。
 \begin{figure}[htbp]
@@ -22,52 +32,43 @@ BU工时分布统计的核心业务流转如图\ref{fig:seq-bu-hour-distribution
 	\caption{BU详情时序图}
 	\label{fig:seq-bu-hour-detail}
 \end{figure}
-用户可以点击饼图的一块，前端会发起该 BU 的详情查询请求。后端同样优先进行缓存校验。若缓存未命中，系统首先通过 ProjectMapper 查询出该 BU 下挂载的所有项目 ID 列表。随后，依据项目 ID 进一步查询具体的加班考勤明细以及近六个月的工时变化趋势。在将详情数据回写至 Redis时，系统对过期时间进行了抖动处理，以防止大量缓存同时失效引发缓存雪崩问题。数据返回前端后，渲染生成具体的加班信息面板与趋势折线图。
-\begin{figure}[!htbp]
-	\centering
-	\includegraphics[width=0.50\linewidth]{imgs/res/BU工时饼图.png}
-	\caption{BU投入分析饼图}
-	\label{fig:res-bu-hour-piechart}
-\end{figure}
-\begin{figure}[!htbp]
-	\centering
-	\includegraphics[width=0.50\linewidth]{imgs/res/BU工时趋势图.png}
-	\caption{BU详情}
-	\label{fig:res-bu-detail-linechart}
-\end{figure}
+用户可以点击饼图的某一块，前端会发起对该 BU 的详情查询请求。后端同样优先进行缓存校验。若缓存未命中，系统首先通过 ProjectMapper 查询出该 BU 下挂载的所有项目 ID 列表。随后，依据项目 ID 进一步查询具体的加班考勤明细以及近六个月的工时变化趋势。在将详情数据回写至 Redis时，系统对过期时间进行了抖动处理，以防止大量缓存同时失效引发缓存雪崩问题。数据返回前端后，渲染生成具体的加班信息面板与趋势折线图。
 
-\FloatBarrier
 \subsection{项目基本信息管理的实现}
-项目基本信息维护是玄武平台数字化项目管理部分的基础枢纽。通过该模块，项目经理（SPM）能够对项目的基本信息、里程碑节点及近期交付计划进行统一维护。整个模块的操作主要可划分为基础数据维护与交付节点的高频更新两大维度，其核心业务流转如图\ref{fig:seq-project-baseinfo}所示。
-\begin{figure}[!htbp]
+项目基本信息维护是玄武平台数字化项目管理部分的基础枢纽。通过该模块，项目经理（SPM）能够对项目的基本信息、里程碑节点及近期交付计划进行统一维护。整个模块的操作主要可划分为基础数据维护与交付节点的高频更新两大维度。
+
+项目基本信息管理类图如图\ref{fig:class-project-baseinfo}所示。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\linewidth]{imgs/class/项目基本信息管理类图.png}
+	\caption{项目基本信息管理类图}
+	\label{fig:class-project-baseinfo}
+\end{figure}
+在实际开发中，我在 TbProjectBaseinfoController 中定义所有的HTTP接口。对于数据查询操作，使用封装好的 ProjectQueryRequest 参数查询类来接收前端传递的参数，这个类是基类 QueryRequest 的子类，核心的业务逻辑由 TbProjectBaseinfoServiceImpl 承担。内部包含分页查询、新增项目、更新项目、查看更改历史等方法，TbProjectBaseinfoMapper 和 TbProjectBaseinfoHistoryMapper 分别用来与项目基本信息表、项目历史信息表和项目交付历史表进行交互。
+
+其核心业务流转如图\ref{fig:seq-project-baseinfo}所示。
+\begin{figure}[htbp]
 	\centering
 	\includegraphics[width=1.0\linewidth]{imgs/Seq/项目信息管理时序图.png}
 	\caption{项目信息管理时序图}
 	\label{fig:seq-project-baseinfo}
 \end{figure}
-针对项目基本信息的“新增与更新”流程，系统在后端实现上重点保障了数据的安全性与可追溯性。当前端发起数据提交请求时，控制层（TbProjectBaseinfoController）首先通过 Apache Shiro 框架中的\texttt{@RequiresPermissions} 注解进行严格的接口权限拦截，并利用 \texttt{@Valid} 完成参数的合法性校验。进入业务层后，使用\texttt{@Transactional}开启 Spring 事务。系统采用“主表+历史表”的双写策略：首先将最新的项目信息更新至MySQL主表；随后，通过构建当前操作的完整数据快照（涵盖新旧值、操作人及操作类型），并写入项目信息快照表。这种快照机制便于后续的项目审计与数据回滚操作。在执行更新操作后，批量清除 Redis 中关联的失效缓存，这样前端在下次查询时能够加载数据库中最新数据。但是由于部分字段比如"近期交付阀点"和"近期阀点日期"修改比较频繁，可能导致快照表的体积变得太大，因此针对这部分的修改历史保存到交付历史变更表中。所有多表更新操作均被严格限制在单一事务中，以确保原子性和一致性。
+针对项目基本信息的“新增与更新”流程，系统在后端实现上重点保障了数据的安全性与可追溯性。当前端发起数据提交请求时，控制层（TbProjectBaseinfoController）首先通过 Apache Shiro 框架中的\texttt{@RequiresPermissions} 注解进行严格的接口权限拦截，并利用 \texttt{@Valid} 完成参数的合法性校验。进入业务层后，使用\texttt{@Transactional}开启 Spring 事务。系统采用“主表+历史表”的双写策略：首先将最新的项目信息更新至MySQL主表；随后，通过构建当前操作的完整数据快照（涵盖新旧值、操作人及操作类型），并写入项目信息快照表。这种快照机制便于后续的项目审计与数据回滚操作。在执行更新操作后，批量清除 Redis 中关联的失效缓存，这样前端在下次查询时能够加载数据库中最新数据。但是由于部分字段比如"近期交付阀点"和"近期阀点日期"修改比较频繁，可能导致快照表的体积变得太大，因此针对这部分的修改历史保存到交付历史变更表中。所有多表更新操作均被严格限制在单一事务中，以确保原子性和一致性。需要注意的是，在实际开发中，并不是在方法上加注解就可以高枕无忧了，事务包裹的范围应该尽可能小，否则可能会导致长事务的出现，很容易耗尽连接池导致数据库崩溃，同时长期持有的锁会引发大范围阻塞，并因阻碍日志清理而拖垮数据库性能。此外还要考虑注解失效的情景，避免在开发中犯这类错误。
 
-项目基本信息管理界面如图\ref{fig:res-project-list}所示：
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.70\linewidth]{imgs/res/项目基本信息列表图.png}
-	\caption{项目基本信息管理}
-	\label{fig:res-project-list}
-\end{figure}
-
-项目交付历史维护界面如图\ref{fig:res-project-weekly}所示：
-\begin{figure}[!htbp]
-	\centering
-	\includegraphics[width=0.70\linewidth]{imgs/res/项目交付历史时间轴.png}
-	\caption{项目交付历史}
-	\label{fig:res-project-weekly}
-\end{figure}
-
-\FloatBarrier
 \subsection{缺陷管理的实现}
 企业软件项目在研发过程中不可避免地会出现Bug，由于企业实际开发过程中同时使用了多套缺陷跟踪平台，包括Trinity、Jira 和 Bugclose，各平台的缺陷字段各不相同，缺陷管理模块需要对这些缺陷进行统一管理，聚合统计。通过数据汇聚与指标计算，为项目管理人员提供多维度的缺陷质量看板。
-系统分别从三个外部平台拉取缺陷数据，存储至数据库的三张同步表（"tb\_sync\_bug"、"tb\_sync\_jira"、"tb\_sync\_bugclose"），然后在前端进行分页查询。由于缺陷数据表的体积非常大，无论是进行分页查询还是excel导出时都会出现较大的延迟。excel导出由于内存里放不下这么多数据，可以参考外部排序的思想，利用游标来分批获取数据并写入Excel。对于深分页，出现这个问题的原因是因为对于 LIMIT offset, N，MySQL 并非直接跳到 offset 处，而是必须从头扫描 offset + N 条记录。如果查询依赖二级索引且不满足覆盖索引，这意味着 MySQL 需要对前 offset 条记录执行毫无意义的回表查询（产生海量的随机 I/O），最后再将这些辛苦查出的数据丢弃。即便优化器最终因代价过高退化为全表扫描，顺序扫描百万行的成本依然巨大。对于分页查询来说，我们可以通过延迟关联将 LIMIT 操作转移到主键索引树上，减少回表次数，再通过INNER JOIN将子查询结果集成到主查询中。
-\begin{figure}[!htbp]
+
+缺陷管理类图如图\ref{fig:class-bug}所示。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\linewidth]{imgs/class/缺陷管理类图.png}
+	\caption{缺陷管理类图}
+	\label{fig:class-bug}
+\end{figure}
+在这个部分定义了 BugQueryRequest 查询类，作为 QueryRequest 的子类，内部设置了自定义的条件过滤器集合，便于对多个字段进行多种条件筛选，业务处理层是该模块的计算核心。BugServiceImpl 不仅向下依赖 BugMapper 执行缺陷表的高并发检索与延迟关联分页操作，还需要知道每个缺陷相关的员工组织信息，因此引入了 OrgMapper。BugServiceImpl 还注入了 ProjectClusterService，在处理“项目聚类统计汇总”这一业务时，能调用其中的方法来获取所有聚类名称或者根据聚类名称查询该聚类下的所有挂载项目清单。
+
+系统的缺陷数据来自于三个外部平台（Trinity,Jira,BugClose），分别存储至数据库的三张同步表（"tb\_sync\_bug"、"tb\_sync\_jira"、"tb\_sync\_bugclose"），然后在前端进行分页查询。由于缺陷数据表的体积非常大，无论是进行分页查询还是excel导出时都会出现较大的延迟。excel导出由于内存里放不下这么多数据，可以参考外部排序的思想，利用游标来分批获取数据并写入Excel。对于深分页，出现这个问题的原因是因为对于 LIMIT offset, N，MySQL 并非直接跳到 offset 处，而是必须从头扫描 offset + N 条记录。如果查询依赖二级索引且不满足覆盖索引，这意味着 MySQL 需要对前 offset 条记录执行毫无意义的回表查询（产生海量的随机 I/O），最后再将这些辛苦查出的数据丢弃。即便优化器最终因代价过高退化为全表扫描，顺序扫描百万行的成本依然巨大。对于分页查询来说，我们可以通过延迟关联将 LIMIT 操作转移到主键索引树上，减少回表次数，再通过INNER JOIN将子查询结果集成到主查询中。
+\begin{figure}[htbp]
 	\centering
 	\noindent % 消除首行缩进，确保左侧完全对齐
 	\begin{minipage}[t]{0.42\textwidth}
@@ -98,25 +99,25 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC
 	\label{fig:sql-optimization-compare}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
 	\centering
 	\includegraphics[width=1.0\linewidth]{imgs/Seq/聚类下所有项目的统计汇总时序图.png}
 	\caption{聚类统计汇总时序图}
 	\label{fig:seq-bug-cluster}
 \end{figure}
-在统计分析方面，系统支持按照项目聚类进行缺陷统计，提供今日/昨日新增与解决数、未解决缺陷数、关闭率等指标，当用户点击某个聚类时，系统会先查询该聚类下的所有项目列表，之后可以利用线程池来并发查询各项目指标，最后在业务逻辑层进行数据累加计算，对于一些关闭率低的项目聚类，还设置了定时任务发送飞书预警消息来提醒。
+在统计分析方面，系统支持按照项目聚类进行缺陷统计，提供今日/昨日新增与解决数、未解决缺陷数、关闭率等指标，当用户点击某个聚类时，系统会先查询该聚类下的所有项目列表，之后可以利用线程池来并发查询各项目指标，对于昨日新增这类冷数据，选择从缓存中查询即可；而对于今日新增等实时热数据，必须从数据库中拿到最新的数据，牺牲一部分性能来确保统计表格的准确性，最后在业务逻辑层进行数据累加计算，对于一些关闭率低的项目聚类，还设置了定时任务发送飞书预警消息来提醒。
 
-项目聚类统计报表实现界面如图\ref{fig:res-bug-cluster}所示
-\begin{figure}[!htbp]
-	\centering
-	\includegraphics[width=0.70\linewidth]{imgs/res/项目聚类统计报表.png}
-	\caption{项目聚类统计报表}
-	\label{fig:res-bug-cluster}
-\end{figure}
-
-\FloatBarrier
 \subsection{重大问题管理的实现}
 重大问题管理模块用于对企业软件项目中发现的严重缺陷和关键问题进行全生命周期的跟踪与管控。与一般缺陷不同，重大问题往往影响范围广、修复周期长、涉及多部门协同,因此系统在设计上要求该模块具备以下能力：首先，支持项目经理（SPM）录入重大问题的详细信息，同时，系统根据“计划解决日期”与“实际解决日期”的对比关系，自动计算问题的当前状态，避免人工维护状态带来的不一致性。在权限控制方面，查询接口实现了细粒度的行级数据隔离。此外，系统还应具备向重大问题的相关负责人员发送飞书消息卡片通知的能力，以便问题跟进过程中的信息同步。最后系统还应支持将筛选结果导出为Excel文件。
+
+重大问题管理类图如图\ref{fig:class-serious-problem}所示。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\linewidth]{imgs/class/重大问题管理类图.png}
+	\caption{重大问题管理类图}
+	\label{fig:class-serious-problem}
+\end{figure}
+这部分功能主要围绕实体类 TbProjectSeriousProblem 展开，在控制层提供了分页查询，新增/更新，导出excel以及发送飞书提醒消息的功能，到了业务层，可以通过员工服务ITbEmpBaseinfoService的相关接口补全关联项目与干系人的元数据；其次，发送飞书消息时需要根据重大问题是否上升处理来调整接收人列表，通过调用OrgService的fetchOrgLeaderByOrganCode() 方法在组织树中向上递归溯源，精准定位并提取根因部门的组织负责人信息，最后将组织好的上下文交给IFeishuService，利用其 sendTemplateCard() 方法渲染为飞书消息卡片并发送。
 
 重大问题管理的核心业务流程如图\ref{fig:seq-serious-problem}所示。用户进入列表页面后，系统首先根据当前登录用户的身份判断其权限，查询并展示其可见的问题记录。用户可通过顶部筛选栏按多维度条件进行检索，也可点击"新增"按钮创建新的重大问题。
 \begin{figure}[!htbp]
@@ -128,32 +129,6 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC
 
 在新增流程中，前端自动完成两项关键逻辑：一是根据数据库中已有记录的最大编号自动生成新的SP编号
 ,保证编号的连续性和唯一性；二是根据“计划解决日期"和"实际解决日期"自动判定问题状态。状态判定规则如下：若两个日期均已填写且实际日期不晚于计划日期，则标记为"按时关闭"；若实际日期晚于计划日期，则标记为"超期关闭"；若仅填写了计划日期且当前日期已超过计划日期，则标记为"超期未关闭"；若仅填写了计划日期且尚未到期，则标记为"处理中"。问题保存到MySQL数据库后，系统自动触发飞书通知流程。通知接收人由多部分组成：固定的6名管理层接收人、问题的首要负责人、项目的SWPM,若问题标记为需要升级,则额外包含升级负责人。此外，系统还会根据根因部门编码查询该部门的组织负责人并纳入通知范围。飞书消息采用卡片模板，确保通知内容的结构化易读且具有美观性。
-
-重大问题管理页面如图\ref{fig:serious-problem}所示：
-\begin{figure}[!htbp]
-	\centering
-	\includegraphics[width=0.70\linewidth]{imgs/res/重大问题管理界面图.png}
-	\caption{重大问题管理界面}
-	\label{fig:serious-problem}
-\end{figure}
-
-飞书卡片消息提醒效果如图\ref{fig:feishu-message-serious-problem}所示：
-\begin{figure}[!htbp]
-	\centering
-	\begin{subfigure}[b]{0.38\textwidth}
-		\centering
-		\includegraphics[width=0.68\linewidth]{imgs/res/重大问题新增通知图.png}
-		\caption*{(a) 重大问题新增通知}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[b]{0.38\textwidth}
-		\centering
-		\includegraphics[width=0.68\linewidth]{imgs/res/重大问题关闭时间提醒图.png}
-		\caption*{(b) 重大问题关闭时间提醒}
-	\end{subfigure}
-	\caption{飞书消息通知}
-	\label{fig:feishu-message-serious-problem}
-\end{figure}
 
 \section{数据库总体设计}
 本节首先阐述数据库设计的总体原则，然后给出系统的E-R模型及关键数据表的详细字段定义。
@@ -237,4 +212,4 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC
 整体来看，四组E-R图分别从工时、项目、缺陷和重大问题四个维度，把系统的核心数据实体及其关联关系固定下来。建模过程遵循数据库设计总体原则。后续各功能模块的详细设计，均围绕本节E-R模型展开。
 
 \section{本章小结}
-本章重点论述了系统核心业务模块的详细设计与编码实现过程。首先确立了兼顾查询性能与数据一致性的数据库设计原则，并结合业务场景梳理了核心实体的 E-R 关系模型。随后，分别对 BU 工时投入分析、项目基本信息管理、缺陷管理以及重大问题管理四个关键模块展开了深入剖析。
+本章重点论述了系统核心业务模块的详细设计，介绍了各个功能模块有关的类和接口以及关联关系，同时详细展示了几个关键点的具体设计和优化，给出了数据库中相关表结构的设计。下一章节，将基于系统的详细设计方案，展开对系统实现与测试的介绍。
