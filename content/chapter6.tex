@@ -2,10 +2,11 @@
 系统测试是保证系统质量的关键，核心目的是验证系统是否满足需求规格，并确保其能够稳定、安全地交付给用户使用。本章对所实现的功能进行测试。对系统的项目管理、缺陷管理、重大问题管理、BU工时统计这几个核心功能模块进行展示与测试，最后从系统的响应时间指标等对系统的非功能性需求进行测试和评估。
 \section{系统环境}
 为保证系统测试结果的真实性与有效性，首先需要明确软件的开发环境。以下列出了服务端、数据库、缓存中间件及前端界面的运行基础配置参数与版本信息，为后续各项测试的顺利开展提供一致的基准支撑。
-% 表格 1：软件环境
-\begin{center}
-	\captionof{table}{软件环境}
-	{\songti\fontsize{10.5pt}{12.6pt}\selectfont
+% 表 6.1：软件环境
+\begin{table}[htbp]
+	\centering
+	\caption{软件环境}
+	{\songti\seuwuhao\selectfont
 		\begin{tabular}{ll}
 			\toprule
 			配置项 & 版本/参数 \\
@@ -20,12 +21,13 @@
 			\bottomrule
 		\end{tabular}
 	}
-\end{center}
+\end{table}
 
-% 表格 2：数据库连接池配置
-\begin{center}
-	\captionof{table}{数据库连接池配置}
-	{\songti\fontsize{10.5pt}{12.6pt}\selectfont
+% 表 6.2：数据库连接池配置
+\begin{table}[htbp]
+	\centering
+	\caption{数据库连接池配置}
+	{\songti\seuwuhao\selectfont
 		\begin{tabular}{ll}
 			\toprule
 			参数 & 值 \\
@@ -37,7 +39,7 @@
 			\bottomrule
 		\end{tabular}
 	}
-\end{center}
+\end{table}
 
 \FloatBarrier
 \section{功能性测试}
@@ -45,10 +47,11 @@
 \subsection{BU工时统计分析功能测试}
 BU工时统计分析主要为了让管理层能在宏观上把控整个南京在各个BU的工时投入占比，以及特定BU模块的详细工时，便于即时对比BU的整体工时投入情况和预算数据,从而进行及时的管理干预。用户进入该界面后，系统默认展示当月工时数据及投入BU的占比情况，页面展示效果如图\ref{fig:res-bu-hour-piechart}所示，用户可以点击部门下拉框，就可以看到树状的组织结构进行选择，也可以点击时间进行选择。点击某个BU模块后就会弹出BU详情对话框，显示总工时、平均工时、加班工时等数据，并以折线图的形式展示近六个月以来公司投入到该BU的工时趋势，页面效果如图\ref{fig:res-bu-detail-linechart}所示。
 
-\begin{center}
-	\captionof{table}{BU工时统计接口测试用例}
+\begin{table}[htbp]
+	\centering
+	\caption{BU工时统计接口测试用例}
 	\label{tab:bu_testcase}
-	{\songti\fontsize{10.5pt}{12.6pt}\selectfont
+	{\songti\seuwuhao\selectfont
 		\begin{tabular}{p{0.7cm} p{2.4cm} p{3.2cm} p{3.4cm} p{2.3cm}}
 			\toprule
 			编号 & 测试用例 & 测试步骤 & 预期结果 & 测试结果 \\
@@ -59,7 +62,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 			\bottomrule
 		\end{tabular}
 	}
-\end{center}
+\end{table}
 
 \begin{figure}[htbp]
 	\centering
@@ -77,10 +80,11 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 \FloatBarrier
 \subsection{项目基本信息管理测试}
 项目基本信息管理模块提供项目全生命周期的基础数据维护功能，即项目管理的立项阶段。本节对该模块的核心功能进行测试验证。图\ref{fig:res-project-list}展示的是项目管理界面，包括项目信息的增删改查、Excel导出等，用户更新项目信息后，可以查看更改历史，如图\ref{fig:res-project-weekly}所示。
-\begin{center}
-	\captionof{table}{项目基础信息管理测试用例}
+\begin{table}[htbp]
+	\centering
+	\caption{项目基础信息管理测试用例}
 	\label{tab:proj_testcase}
-	{\songti\fontfamily{ptm}\selectfont\fontsize{10.5pt}{12.6pt}\selectfont
+	{\songti\seuwuhao\selectfont
 		\begin{tabular}{p{0.8cm} p{2.4cm} p{3.2cm} p{3.6cm} p{2.2cm}}
 			\toprule
 			\textbf{编号} & \textbf{测试用例} & \textbf{测试步骤} & \textbf{预期结果} & \textbf{测试结果} \\
@@ -99,7 +103,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 			\bottomrule
 		\end{tabular}
 	}
-\end{center}
+\end{table}
 
 \begin{figure}[htbp]
 	\centering
@@ -117,11 +121,12 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 
 \FloatBarrier
 \subsection{缺陷管理测试}
-缺陷管理模块整合了Trinity、Jira和BugClose三个数据源的缺陷数据，查询结果如图\ref{fig:res-bug-pagequery}所示，除了提供基础的查询功能，还包括以聚类为维度提供跨顶目缺陷看板。用户点击菜单侧边栏后，主页面以表格形式展示各聚类的未解决总数、新增数、解决数、关闭率等关键指标，并以红黄绿灯状态标识顶目健康度，点击状态灯会弹出预警弹窗，点击按钮可以提醒相关人员，如图\ref{fig:res-bug-cluster-feishu}所示。点击聚类名称可进一步查看其下各顶目的缺陷详单，如图\ref{fig:res-bug-cluster-detail}所示。
-\begin{center}
-	\captionof{table}{缺陷管理接口测试用例}
+缺陷管理模块整合了Trinity、Jira和BugClose三个数据源的缺陷数据，查询结果如图\ref{fig:res-bug-pagequery}所示，除了提供基础的查询功能，还包括以聚类为维度提供多项目缺陷看板。用户点击菜单侧边栏后，主页面以表格形式展示各聚类的未解决总数、新增数、解决数、关闭率等关键指标，并以红黄绿灯状态标识项目健康度，点击状态灯会弹出预警弹窗，点击按钮可以提醒相关人员，如图\ref{fig:res-bug-cluster-feishu}所示。点击聚类名称可进一步查看其下各项目的缺陷详单，如图\ref{fig:res-bug-cluster-detail}所示。
+\begin{table}[htbp]
+	\centering
+	\caption{缺陷管理接口测试用例}
 	\label{tab:bug_cluster_testcase}
-	{\songti\fontfamily{ptm}\selectfont\fontsize{10.5pt}{12.6pt}\selectfont
+	{\songti\seuwuhao\selectfont
 		\begin{tabular}{p{0.8cm} p{2.4cm} p{3.2cm} p{3.6cm} p{2.2cm}}
 			\toprule
 			\textbf{编号} & \textbf{测试用例} & \textbf{测试步骤} & \textbf{预期结果} & \textbf{测试结果} \\
@@ -138,8 +143,8 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 			\bottomrule
 		\end{tabular}
 	}
-\end{center}
-% 此处保留一个空行，符合“表格与下文空一行”的要求
+\end{table}
+% 此处保留一个空行，符合”表格与下文空一行”的要求
 
 \begin{figure}[htbp]
 	\centering
@@ -164,12 +169,13 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 
 \FloatBarrier
 \subsection{重大问题管理测试}
-重大问题管理模块用于记录和跟踪顶目执行过程中出现的重大异常事件，覆盖问题从发现登记、根因分析、
+重大问题管理模块用于记录和跟踪项目执行过程中出现的重大异常事件，覆盖问题从发现登记、根因分析、
 方案制定到实施关闭的完整闭环流程，重大问题管理页面如图\ref{fig:serious-problem}所示。同时集成了飞书卡片通知机制，在问题新增时自动推送消息至相关责任人，飞书卡片消息提醒效果如图\ref{fig:feishu-message-serious-problem}所示。这个模块还支持图表来可视化重大问题的分布情况，统计结果如图\ref{fig:serious-problem-statistics}所示，便于了解哪些项目的重大问题比较突出。
-\begin{center}
-	\captionof{table}{重大问题管理接口测试用例}
+\begin{table}[htbp]
+	\centering
+	\caption{重大问题管理接口测试用例}
 	\label{tab:serious_problem_testcase}
-	{\songti\fontfamily{ptm}\selectfont\fontsize{10.5pt}{12.6pt}\selectfont
+	{\songti\seuwuhao\selectfont
 		\begin{tabular}{p{0.8cm} p{2.4cm} p{3.2cm} p{3.6cm} p{2.2cm}}
 			\toprule
 			\textbf{编号} & \textbf{测试用例} & \textbf{测试步骤} & \textbf{预期结果} & \textbf{测试结果} \\
@@ -182,13 +188,13 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 			\addlinespace[2pt]
 			TC17 & 查看详情 & 点击查看图标 & 抽屉弹窗展示全部字段信息（只读） & 符合预期 \\
 			\addlinespace[2pt]
-			TC06 & 导出 Excel & 点击导出 & 下载 xlsx 文件 & 符合预期 \\
+			TC18 & 导出 Excel & 点击导出 & 下载 xlsx 文件 & 符合预期 \\
 			\addlinespace[2pt]
-			TC18 & 通知 SPM & 点击重大问题右侧小喇叭 & 飞书卡片发送至指定 SPM & 符合预期 \\
+			TC19 & 通知 SPM & 点击重大问题右侧小喇叭 & 飞书卡片发送至指定 SPM & 符合预期 \\
 			\bottomrule
 		\end{tabular}
 	}
-\end{center}
+\end{table}
 
 \begin{figure}[htbp]
 	\centering
@@ -224,41 +230,43 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 \section{非功能性测试}
 在确保系统功能满足业务需求的基础上，系统的稳定性、安全性以及性能响应同样是企业级应用不可忽视的重要指标。本节将从边界异常处理、数据越权访问防护以及海量数据并发查询等维度展开非功能性评估。
 \subsection{边界测试}
-\begin{center}
-	\captionof{table}{边界测试用例表}
+\begin{table}[htbp]
+	\centering
+	\caption{边界测试用例表}
 	\label{tab:boundary_testcase}
-	{\songti\fontfamily{ptm}\selectfont\fontsize{10.5pt}{12.6pt}\selectfont
+	{\songti\seuwuhao\selectfont
 		\begin{tabular}{p{0.8cm} p{2.4cm} p{3.2cm} p{3.6cm} p{2.2cm}}
 			\toprule
 			\textbf{编号} & \textbf{测试用例} & \textbf{测试步骤} & \textbf{预期结果} & \textbf{测试结果} \\
 			\midrule
-			TC19 & 查询BU工时分布 & 不输入组织id或者不输入年月 & 饼图部分展示一个空数据页面 & 符合预期 \\
+			TC20 & 查询BU工时分布 & 不输入组织id或者不输入年月 & 饼图部分展示一个空数据页面 & 符合预期 \\
 			\addlinespace[2pt]
-			TC20 & 修改项目交付历史 & 点击编辑，不修改内容，然后查看交付历史 & 交付时间轴上节点没有新增 & 符合预期 \\
+			TC21 & 修改项目交付历史 & 点击编辑，不修改内容，然后查看交付历史 & 交付时间轴上节点没有新增 & 符合预期 \\
 			\addlinespace[2pt]
-			TC21 & 项目名称重复新增 & 新增项目时使用已存在的项目名 & 返回“项目名称重复，请检查” & 符合预期 \\
+			TC22 & 项目名称重复新增 & 新增项目时使用已存在的项目名 & 返回”项目名称重复，请检查” & 符合预期 \\
 			\addlinespace[2pt]
-			TC22 & 飞书receivers为空 & 发送飞书消息传空receivers列表 & 返回飞书通知发送失败 & 符合预期 \\
+			TC23 & 飞书receivers为空 & 发送飞书消息传空receivers列表 & 返回飞书通知发送失败 & 符合预期 \\
 			\bottomrule
 		\end{tabular}
 	}
-\end{center}
+\end{table}
 
 \subsection{安全性测试}
 安全测试主要看重大问题部分系统是否支持权限划分，即普通用户、项目经理以及管理员登录后，对重大问题查询的可见性是否符合预期的效果。用例及测试结果如表\ref{tab:serious_problem_testcase}所示。
-\begin{center}
-	\captionof{table}{安全性测试用例表}
+\begin{table}[htbp]
+	\centering
+	\caption{安全性测试用例表}
 	\label{tab:serious_problem_safety_testcase}
-	{\songti\fontfamily{ptm}\selectfont\fontsize{10.5pt}{12.6pt}\selectfont
+	{\songti\seuwuhao\selectfont
 		\begin{tabular}{p{0.8cm} p{2.4cm} p{3.2cm} p{3.6cm} p{2.2cm}}
 			\toprule
 			\textbf{编号} & \textbf{测试用例} & \textbf{测试步骤} & \textbf{预期结果} & \textbf{测试结果} \\
 			\midrule
-			TC19 & 重大问题可见性 & 由于没有管理员的账号密码，选择在代码部分将登录用户uid分别设置为管理员,SPM，普通用户 & 管理员可以看到所有重大问题，其他人只能看到和自己相关的重大问题 & 符合预期 \\
+			TC24 & 重大问题可见性 & 由于没有管理员的账号密码，选择在代码部分将登录用户uid分别设置为管理员,SPM，普通用户 & 管理员可以看到所有重大问题，其他人只能看到和自己相关的重大问题 & 符合预期 \\
 			\bottomrule
 		\end{tabular}
 	}
-\end{center}
+\end{table}
 
 \subsection{性能测试}
 系统在开发过程中主要在缺陷查询以及BU工时统计部分遇到了加载较慢的问题，因此本小节针对这两个部分进行性能测试。对于深分页来说，主要是测试系统响应时间随着页号的变化趋势；工时则是看SQL的执行时间。
@@ -267,25 +275,26 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 \begin{figure}[!htbp]          % 使用 [!htbp] 避免过多空白
 	\centering
 	\includegraphics[width=1.0\linewidth]{imgs/res/performance_comparison.pdf}
-	\caption{优化前后页面加载性能对比}   % 图序按章编号（第4章第1图），表序与图序统一
+	\caption{优化前后页面加载性能对比}   % 图序按章编号（第6章）
 	\label{fig:deep_page_performance_comparison}
 \end{figure}
 
-\begin{center}
-	\captionof{table}{性能测试用例表}
+\begin{table}[htbp]
+	\centering
+	\caption{性能测试用例表}
 	\label{tab:performance_testcase}
-	{\songti\fontfamily{ptm}\selectfont\fontsize{10.5pt}{12.6pt}\selectfont
+	{\songti\seuwuhao\selectfont
 		\begin{tabular}{p{0.8cm} p{2.4cm} p{3.2cm} p{3.6cm} p{2.2cm}}
 			\toprule
 			\textbf{编号} & \textbf{测试用例} & \textbf{测试步骤} & \textbf{预期结果} & \textbf{测试结果} \\
 			\midrule
-			TC19 & 工时查询响应 & 用户查询整个公司的BU公司分布 & 响应时间不超过2秒 & 响应时间小于1秒 \\
+			TC25 & 工时查询响应 & 用户查询整个公司的BU公司分布 & 响应时间不超过2秒 & 响应时间小于1秒 \\
 			\addlinespace[2pt]
-			TC20 & 重大问题excel导出 & 在重大问题管理界面点击excel导出 & 响应时间不超过2秒 & 响应时间小于1秒 \\
+			TC26 & 重大问题excel导出 & 在重大问题管理界面点击excel导出 & 响应时间不超过2秒 & 响应时间小于1秒 \\
 			\bottomrule
 		\end{tabular}
 	}
-\end{center}
+\end{table}
 
-\subsection{本章小结}
+\section{本章小结}
 本章对实现的企业级汽车数字化运营平台进行了全面、系统的测试。首先明确了测试所依赖的软件基础环境；其次，通过测试用例覆盖了各个核心功能模块，验证了系统业务逻辑的准确性；最后，通过开展边界测试、安全性验证及性能测试等非功能性测试，证明了系统各项指标均达到了预期的设计要求，具备较高的可用性与安全性。

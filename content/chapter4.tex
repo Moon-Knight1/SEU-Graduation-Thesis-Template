@@ -24,7 +24,7 @@
 在上述分层架构的基础上，从业务维度对后端工程进行横向模块划分，将系统拆分为三个核心业务域：系统管理、公司运营管理和项目运营管理，以降低模块间的耦合度并提升代码的可维护性。在后端工程的代码组织上，如果将所有的 Controller 或者 Service 混杂在同一个包下，随着时间的推移，类越来越多，不利于开发人员进行代码的维护和拓展。因此，将工程结构划分为三个软件包：system，companyM，projectM。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.7\linewidth]{imgs/玄武功能模块图Detail.png }
+	\includegraphics[width=0.7\linewidth]{imgs/玄武功能模块图Detail.png}
 	\caption{功能模块图}
 \end{figure}
 
@@ -37,12 +37,13 @@
 	该模块对应后端 companyM 包，聚焦于企业人力资源的度量分析，主要负责员工、组织、工时、KPI 等企业基础管理和统计分析功能。其主要业务包括员工信息管理、组织结构查询、工时统计分析、KPI 指标统计。我负责该模块中“工时统计分析”下的 BU 工时分布功能。主要涉及四张数据库表：
 	\verb|tb_emp_baseinfo| 存储员工基础信息，\verb|tb_org_tree| 存储组织树结构，\verb|tb_sync_wh| 存储从外部系统同步而来的工时记录，\verb|tb_sync_attend_hour| 存储考勤工时数据，用于计算加班工时。该模块既为项目管理提供人员和组织信息支撑，也为管理层提供多维度工时和绩效分析能力。
 	% =============================================
-	% 表 X.1  BU维度工时统计分析
+	% 表 4.1  BU维度工时统计分析
 	% =============================================
-	\begin{center}
-		\captionof{table}{BU维度工时统计分析功能}
+	\begin{table}[H]
+		\centering
+		\caption{BU维度工时统计分析功能}
 		\label{tab:bu_workhour}
-		{\songti\fontfamily{ptm}\selectfont\fontsize{10.5pt}{12.6pt}\selectfont
+		{\songti\seuwuhao\selectfont
 			\begin{tabular}{p{3.5cm} p{10.5cm}}
 				\toprule
 				\textbf{功能项} & \textbf{详细说明} \\
@@ -54,7 +55,7 @@
 				\bottomrule
 			\end{tabular}
 		}
-	\end{center}
+	\end{table}
 	
 	% 表格与下文之间空一行（此处空行为必须）
 	
@@ -62,12 +63,13 @@
 	该模块对应后端 projectM 包，是系统的核心业务重镇，代码体量最大，主要围绕项目全生命周期管理展开，涵盖的子功能如图所示。我在该模块中负责的部分是项目基本信息维护、缺陷查询与统计以及重大问题管理。主要涉及以下几张数据库表：
 	项目基本信息表 \verb|tb_project_baseinfo_new| 保存项目主档信息及里程碑进度，是多个业务子模块的基础数据源；\verb|tb_project_delivery_history| 用于记录项目近期交付信息的变更历史，支持交付节点的审计追溯。缺陷管理方面，\verb|tb_sync_bug|、\verb|tb_sync_jira|、\verb|tb_sync_bugclose| 等表用于从外部缺陷平台同步缺陷数据，实现多源缺陷的统一管理。为支持聚类维度的缺陷分析，\verb|tb_project_cluster| 将多个项目归入同一聚类，\verb|tb_project_cluster_user| 记录每个聚类对应的 SWPM（软件项目经理）负责人，\verb|tb_bug_cluster_daily_snapshot| 则存储每日聚类的缺陷快照数据，便于之后了解未解决缺陷数的变化趋势。此外，\verb|tb_project_serious_problem_new| 记录软件开发过程中的重大问题，用于重大风险跟踪与根因复盘。
 	% =============================================
-	% 表 X.2  项目基础信息管理
+	% 表 4.2  项目基础信息管理
 	% =============================================
-	\begin{center}
-		\captionof{table}{项目基础信息管理功能}
+	\begin{table}[H]
+		\centering
+		\caption{项目基础信息管理功能}
 		\label{tab:proj_baseinfo}
-		{\songti\fontfamily{ptm}\selectfont\fontsize{10.5pt}{12.6pt}\selectfont
+		{\songti\seuwuhao\selectfont
 			\begin{tabular}{p{3.5cm} p{10.5cm}}
 				\toprule
 				\textbf{功能项} & \textbf{详细说明} \\
@@ -80,18 +82,19 @@
 				\bottomrule
 			\end{tabular}
 		}
-	\end{center}
+	\end{table}
 	
 	% 表格与下文之间空一行
 	
 	
 	% =============================================
-	% 表 X.3  缺陷查询与统计
+	% 表 4.3  缺陷查询与统计
 	% =============================================
-	\begin{center}
-		\captionof{table}{缺陷查询与统计功能}
+	\begin{table}[H]
+		\centering
+		\caption{缺陷查询与统计功能}
 		\label{tab:bug_query}
-		{\songti\fontfamily{ptm}\selectfont\fontsize{10.5pt}{12.6pt}\selectfont
+		{\songti\seuwuhao\selectfont
 			\begin{tabular}{p{3.5cm} p{10.5cm}}
 				\toprule
 				\textbf{功能项} & \textbf{详细说明} \\
@@ -103,16 +106,17 @@
 				\bottomrule
 			\end{tabular}
 		}
-	\end{center}
+	\end{table}
 	
 	% 表格与下文之间空一行
 	% =============================================
-	% 表 X.4  重大问题管理
+	% 表 4.4  重大问题管理
 	% =============================================
-	\begin{center}
-		\captionof{table}{重大问题管理功能}
+	\begin{table}[H]
+		\centering
+		\caption{重大问题管理功能}
 		\label{tab:serious_problem}
-		{\songti\fontfamily{ptm}\selectfont\fontsize{10.5pt}{12.6pt}\selectfont
+		{\songti\seuwuhao\selectfont
 			\begin{tabular}{p{3.5cm} p{10.5cm}}
 				\toprule
 				\textbf{功能项} & \textbf{详细说明} \\
@@ -122,7 +126,7 @@
 				问题编辑 & 支持重大问题编辑，对已登记的问题进行补充、修改和状态更新，保证问题处理过程中的信息及时准确。 \\
 				详情查看 & 支持重大问题详情查看，展示问题完整内容、处理进展、责任归属和当前状态。 \\
 				数据导出 & 支持重大问题数据导出，将重大问题列表导出为 Excel，便于项目复盘和管理汇报。 \\
-				消息通知 & 
+				消息通知 &
 				\begin{enumerate}[nosep, leftmargin=*, label=\arabic*.]
 					\item 新增问题时自动发送卡片消息给固定接收人、首问闭环责任人、SWPM 及根因部门负责人；
 					\item 支持单独向 SWPM 发送通知；
@@ -132,7 +136,7 @@
 				\bottomrule
 			\end{tabular}
 		}
-	\end{center}
+	\end{table}
 	
 	% 表格与下文之间空一行
 \end{enumerate}
