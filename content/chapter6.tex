@@ -3,7 +3,7 @@
 \section{系统环境}
 为保证系统测试结果的真实性与有效性，首先需要明确软件的开发环境。以下列出了服务端、数据库、缓存中间件及前端界面的运行基础配置参数与版本信息，为后续各项测试的顺利开展提供一致的基准支撑。
 % 表 6.1：软件环境
-\begin{table}[htbp]
+\begin{table}[H]
 	\centering
 	\caption{软件环境}
 	{\songti\seuwuhao\selectfont
@@ -24,7 +24,7 @@
 \end{table}
 
 % 表 6.2：数据库连接池配置
-\begin{table}[htbp]
+\begin{table}[H]
 	\centering
 	\caption{数据库连接池配置}
 	{\songti\seuwuhao\selectfont
@@ -47,7 +47,7 @@
 \subsection{BU工时统计分析功能测试}
 BU工时统计分析主要为了让管理层能在宏观上把控整个南京在各个BU的工时投入占比，以及特定BU模块的详细工时，便于即时对比BU的整体工时投入情况和预算数据,从而进行及时的管理干预。用户进入该界面后，系统默认展示当月工时数据及投入BU的占比情况，页面展示效果如图\ref{fig:res-bu-hour-piechart}所示，用户可以点击部门下拉框，就可以看到树状的组织结构进行选择，也可以点击时间进行选择。点击某个BU模块后就会弹出BU详情对话框，显示总工时、平均工时、加班工时等数据，并以折线图的形式展示近六个月以来公司投入到该BU的工时趋势，页面效果如图\ref{fig:res-bu-detail-linechart}所示。
 
-\begin{table}[htbp]
+\begin{table}[H]
 	\centering
 	\caption{BU工时统计接口测试用例}
 	\label{tab:bu_testcase}
@@ -80,7 +80,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 \FloatBarrier
 \subsection{项目基本信息管理测试}
 项目基本信息管理模块提供项目全生命周期的基础数据维护功能，即项目管理的立项阶段。本节对该模块的核心功能进行测试验证。图\ref{fig:res-project-list}展示的是项目管理界面，包括项目信息的增删改查、Excel导出等，用户更新项目信息后，可以查看更改历史，如图\ref{fig:res-project-weekly}所示。
-\begin{table}[htbp]
+\begin{table}[H]
 	\centering
 	\caption{项目基础信息管理测试用例}
 	\label{tab:proj_testcase}
@@ -122,7 +122,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 \FloatBarrier
 \subsection{缺陷管理测试}
 缺陷管理模块整合了Trinity、Jira和BugClose三个数据源的缺陷数据，查询结果如图\ref{fig:res-bug-pagequery}所示，除了提供基础的查询功能，还包括以聚类为维度提供多项目缺陷看板。用户点击菜单侧边栏后，主页面以表格形式展示各聚类的未解决总数、新增数、解决数、关闭率等关键指标，并以红黄绿灯状态标识项目健康度，点击状态灯会弹出预警弹窗，点击按钮可以提醒相关人员，如图\ref{fig:res-bug-cluster-feishu}所示。点击聚类名称可进一步查看其下各项目的缺陷详单，如图\ref{fig:res-bug-cluster-detail}所示。
-\begin{table}[htbp]
+\begin{table}[H]
 	\centering
 	\caption{缺陷管理接口测试用例}
 	\label{tab:bug_cluster_testcase}
@@ -171,7 +171,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 \subsection{重大问题管理测试}
 重大问题管理模块用于记录和跟踪项目执行过程中出现的重大异常事件，覆盖问题从发现登记、根因分析、
 方案制定到实施关闭的完整闭环流程，重大问题管理页面如图\ref{fig:serious-problem}所示。同时集成了飞书卡片通知机制，在问题新增时自动推送消息至相关责任人，飞书卡片消息提醒效果如图\ref{fig:feishu-message-serious-problem}所示。这个模块还支持图表来可视化重大问题的分布情况，统计结果如图\ref{fig:serious-problem-statistics}所示，便于了解哪些项目的重大问题比较突出。
-\begin{table}[htbp]
+\begin{table}[H]
 	\centering
 	\caption{重大问题管理接口测试用例}
 	\label{tab:serious_problem_testcase}
@@ -227,33 +227,37 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 	\label{fig:serious-problem-statistics}
 \end{figure}
 
+\subsection{各功能的边界测试}
+{\songti\seuwuhao\selectfont
+\begin{longtable}{p{0.8cm} p{2.4cm} p{3.2cm} p{3.6cm} p{2.2cm}}
+	\caption{边界测试用例表} \label{tab:boundary_testcase} \\
+	\toprule
+	\textbf{编号} & \textbf{测试用例} & \textbf{测试步骤} & \textbf{预期结果} & \textbf{测试结果} \\
+	\midrule
+	\endfirsthead
+	\caption[]{边界测试用例表（续）} \\
+	\toprule
+	\textbf{编号} & \textbf{测试用例} & \textbf{测试步骤} & \textbf{预期结果} & \textbf{测试结果} \\
+	\midrule
+	\endhead
+	\bottomrule
+	\endfoot
+	TC20 & 查询BU工时分布 & 不输入组织id或者不输入年月 & 饼图部分展示一个空数据页面 & 符合预期 \\
+	\addlinespace[2pt]
+	TC21 & 修改项目交付历史 & 点击编辑，不修改内容，然后查看交付历史 & 交付时间轴上节点没有新增 & 符合预期 \\
+	\addlinespace[2pt]
+	TC22 & 项目名称重复新增 & 新增项目时使用已存在的项目名 & 返回”项目名称重复，请检查” & 符合预期 \\
+	\addlinespace[2pt]
+	TC23 & 飞书receivers为空 & 发送飞书消息传空receivers列表 & 返回飞书通知发送失败 & 符合预期 \\
+\end{longtable}
+}
+
 \section{非功能性测试}
 在确保系统功能满足业务需求的基础上，系统的稳定性、安全性以及性能响应同样是企业级应用不可忽视的重要指标。本节将从边界异常处理、数据越权访问防护以及海量数据并发查询等维度展开非功能性评估。
-\subsection{边界测试}
-\begin{table}[htbp]
-	\centering
-	\caption{边界测试用例表}
-	\label{tab:boundary_testcase}
-	{\songti\seuwuhao\selectfont
-		\begin{tabular}{p{0.8cm} p{2.4cm} p{3.2cm} p{3.6cm} p{2.2cm}}
-			\toprule
-			\textbf{编号} & \textbf{测试用例} & \textbf{测试步骤} & \textbf{预期结果} & \textbf{测试结果} \\
-			\midrule
-			TC20 & 查询BU工时分布 & 不输入组织id或者不输入年月 & 饼图部分展示一个空数据页面 & 符合预期 \\
-			\addlinespace[2pt]
-			TC21 & 修改项目交付历史 & 点击编辑，不修改内容，然后查看交付历史 & 交付时间轴上节点没有新增 & 符合预期 \\
-			\addlinespace[2pt]
-			TC22 & 项目名称重复新增 & 新增项目时使用已存在的项目名 & 返回”项目名称重复，请检查” & 符合预期 \\
-			\addlinespace[2pt]
-			TC23 & 飞书receivers为空 & 发送飞书消息传空receivers列表 & 返回飞书通知发送失败 & 符合预期 \\
-			\bottomrule
-		\end{tabular}
-	}
-\end{table}
 
 \subsection{安全性测试}
 安全测试主要看重大问题部分系统是否支持权限划分，即普通用户、项目经理以及管理员登录后，对重大问题查询的可见性是否符合预期的效果。用例及测试结果如表\ref{tab:serious_problem_testcase}所示。
-\begin{table}[htbp]
+\begin{table}[H]
 	\centering
 	\caption{安全性测试用例表}
 	\label{tab:serious_problem_safety_testcase}
@@ -279,7 +283,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 	\label{fig:deep_page_performance_comparison}
 \end{figure}
 
-\begin{table}[htbp]
+\begin{table}[H]
 	\centering
 	\caption{性能测试用例表}
 	\label{tab:performance_testcase}

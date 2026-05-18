@@ -23,6 +23,7 @@
 当前模板建议在 Windows 10 / 11 上使用，推荐直接使用 TeX Live 2025，并通过 `latexmk + XeLaTeX + biber` 编译。
 
 本机实测环境如下：
+
 - `latexmk`：`4.86a`
 - `XeLaTeX`：`XeTeX 3.141592653-2.6-0.999997 (TeX Live 2025)`
 - `biber`：`2.20`
@@ -49,6 +50,7 @@ biber --version
 ### 可复现环境清单
 
 如果你希望尽量复现当前仓库在开发机上的编译表现，建议至少满足以下条件：
+
 - TeX 发行版：TeX Live 2025
 - 编译引擎：XeLaTeX
 - 构建工具：latexmk 4.86a 或同代版本
@@ -220,6 +222,7 @@ xelatex -interaction=nonstopmode -file-line-error -synctex=1 main.tex
 - `ai_used`
   控制是否使用生成式人工智能。
   可选值：
+  
   - `yes`：使用了 AI
   - `no`：未使用 AI
   - `unset`：模板调试状态，正式写作不建议使用
@@ -227,22 +230,25 @@ xelatex -interaction=nonstopmode -file-line-error -synctex=1 main.tex
 - `ai_scope`
   仅当 `ai_used = yes` 时需要填写。
   当前模板使用数字编码：
+  
   - `1`：文本生成及内容修改
   - `2`：数据、图表分析、代码调试
   - `3`：其他
-
+  
   可组合填写，例如：
+  
   - `1`
   - `2`
   - `12`
   - `13`
   - `123`
-
+  
   如果 `ai_used = yes` 但没有填写 `ai_scope`，模板会直接报错。
 
 - `ai_checkbox_style`
   控制 AI 使用情况说明表中“已选中”方框的样式。
   可选值：
+  
   - `checkedbox`：方框内打勾
   - `blacksquare`：实心方块
 
@@ -253,16 +259,19 @@ xelatex -interaction=nonstopmode -file-line-error -synctex=1 main.tex
 - `signature_student_image`
   学生签名图片路径，可选。
   填写后会自动渲染到：
+  
   - 第二页两处论文作者签名
   - 第三页学生签名
 
 - `signature_teacher_image`
   教师签名图片路径，可选。
   填写后会自动渲染到：
+  
   - 第二页导师签名
   - 第三页指导教师签名
 
 补充说明：
+
 - 当前类文件中的 AI 说明表课题名称会自动由 `title + subtitle` 生成
 
 示例：
@@ -319,6 +328,7 @@ xelatex -interaction=nonstopmode -file-line-error -synctex=1 main.tex
 ```
 
 说明：
+
 - 如果 `ai_used = no`，不需要写 `\seuaiitem`
 
 ### `\begin{document}` 之后的文档流程
@@ -440,3 +450,24 @@ ai_scope = {1}
 
 - `main.pdf` 是当前示例文档的编译产物，不是模板说明文档
 - 模板目前更适合在 Windows 上直接使用；如果你准备迁移到 macOS / Linux，请预留时间自行处理字体兼容问题
+
+## Git管理
+
+```
+git config http.proxy http://127.0.0.1:52544
+git config https.proxy https://127.0.0.1:52544
+
+git add .
+git commit -m "提交描述"
+git push origin main
+```
+
+## Claude Code更新
+
+```
+set HTTP_PROXY=http://127.0.0.1:52544
+set HTTPS_PROXY=http://127.0.0.1:52544
+claude update
+```
+
+
