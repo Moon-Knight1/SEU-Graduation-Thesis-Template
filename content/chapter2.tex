@@ -1,4 +1,7 @@
 \chapter{相关开发技术与环境}
+
+本章节对系统开发中使用的主要技术进行说明。Java后端采用主流的 Spring Boot 框架搭建接口服务，数据层由 MySQL 负责持久化存储、Redis 负责热点数据缓存，，MyBatis-Plus 简化了持久层的数据库操作编码。前端使用 Vue ，UI组件库安装的是Ant Design Vue，ECharts 用于数据可视化的图表展示。
+
 \section{SpringBoot框架}
 \subsection{SpringBoot框架核心理念}
 在Java企业级应用开发中，Spring、Spring MVC与MyBatis等传统架构需要维护大量XML配置文件，手工管理依赖版本并执行多步骤部署流程。启动新项目时，开发者需投入相当一部分时间处理框架整合与组件装配，而非直接编写业务代码。Spring Boot的设计目标正是减少这一部分非功能性的搭建开销。
