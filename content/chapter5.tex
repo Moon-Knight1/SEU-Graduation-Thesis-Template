@@ -151,6 +151,13 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC
 
 \subsection{系统E-R模型概览}
 在明确数据库设计总体原则之后，本节通过E-R模型梳理系统的核心数据实体及其相互关系。借助E-R图对系统进行概念建模，能够以可视化的方式呈现数据实体之间的语义关联。合理的数据库结构设计，有助于在开发前期发现潜在的数据问题，降低编码阶段的出错概率和返工成本，同时也为理解设计决策提供了清晰的分析框架。由于系统涉及的业务表较多。本文没有将所有数据库表绘制在同一张 E-R 图中，而是按照核心业务场景进行拆分。这样既可以避免整体图过于复杂，也能够更加清晰地展示不同业务域内部的数据关系。结合系统功能实现，本文主要选取 BU 工时统计、项目基本信息管理、缺陷查询与统计、重大问题管理四个核心业务场景进行 E-R 模型分析。
+	
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1.0\linewidth]{imgs/ER/er-diagram.png}
+	\caption{数据库关系图}
+	\label{fig:er-overall}
+\end{figure}
 
 \begin{enumerate}[label=(\arabic*)]	
 	\item BU工时统计主要用于分析各个组织部门在业务单元的工时投入情况，涉及的实体包括组织树（\texttt{tb\_org\_tree}）、员工基础信息（\texttt{tb\_emp\_baseinfo}）、项目列表（\texttt{tb\_project\_\allowbreak baseinfo\_\allowbreak new}）、工时记录（\texttt{tb\_sync\_wh}）和考勤工时（\texttt{tb\_sync\_attend\_hour}），其关系如图\ref{fig:er-org-wh}所示。
