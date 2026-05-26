@@ -5,11 +5,12 @@
 \usepackage{enumitem}
 \usepackage{xcolor}
 \usepackage{listings}
+\usepackage[ruled,linesnumbered]{algorithm2e}
 \setlist[enumerate,1]{label=(\arabic*)}
 
-% 定制 Java 代码样式
+% 定制 SQL 代码样式
 \lstset{
-	language=Java,
+	language=SQL,
 	basicstyle=\ttfamily\small,
 	keywordstyle=\color{blue},
 	commentstyle=\color{gray},
@@ -18,24 +19,19 @@
 	numberstyle=\tiny\color{gray},
 	stepnumber=1,
 	numbersep=5pt,
-	backgroundcolor=\color{gray!5},
 	frame=single,
-	rulecolor=\color{black!30},
 	breaklines=true,
-	breakatwhitespace=true,
-	showspaces=false,
 	showstringspaces=false,
-	showtabs=false,
-	tabsize=2,
-	captionpos=b           % 标题在下方
+	captionpos=b
 }
 
 \newcommand{\demobox}[2]{\fbox{\rule{0pt}{#2}\rule{#1}{0pt}}}
 
-\addkey{机器学习}{ML}
-\addkey{关键词 2}{Keyword2}
-\addkey{关键词 3}{Keyword3}
-\addkey{关键词 4}{Keyword4}
+\addkey{汽车电子软件}{Automotive Electronic Software}
+\addkey{数字化运营平台}{Digital Operation Platform}
+\addkey{项目管理}{Project Management}
+\addkey{质量跟踪}{Quality Tracking}
+\addkey{B/S架构}{B/S Architecture}
 
 \seusetup{
   title                          = {面向企业级场景的汽车},
@@ -61,8 +57,8 @@
 }
 
 \seuaiitem{
-  tool_version = {DeepSeek-V3.2\par ChatGPT-5.4\par Gemini-3.1\par Claude-4.6},
-  process = {输入章节主题、关键术语和改写要求，辅助生成初稿表述并对部分段落进行语言润色，最终内容均由本人核对修改。},
+  tool_version = {DeepSeek-V4},
+  process = {在使用PlantUML,Mermaid,Drawio等网站画图时，辅助生成网站语法的代码，图的结构和内容有本人设计修改},
   pages   = {第二章 1.1（P5）、第二章 1.2（P7）}
 }
 

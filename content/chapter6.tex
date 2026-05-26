@@ -1,4 +1,4 @@
-\chapter{系统实现与测试}
+\chapter{系统测试}
 系统测试是保证系统质量的关键，核心目的是验证系统是否满足需求规格，并确保其能够稳定、安全地交付给用户使用。本章对所实现的功能进行测试。对系统的项目管理、缺陷管理、重大问题管理、BU工时统计这几个核心功能模块进行展示与测试，最后从系统的响应时间指标等对系统的非功能性需求进行测试和评估。
 \section{测试环境}
 为保证系统测试结果的真实性与有效性，首先需要明确软件的开发环境。以下列出了服务端、数据库、缓存中间件及前端界面的运行基础配置参数与版本信息，为后续各项测试的顺利开展提供一致的基准支撑。
@@ -25,22 +25,22 @@
 \end{table}
 
 % 表 6.2：数据库连接池配置
-\begin{table}[H]
-	\centering
-	\caption{数据库连接池配置}
-	{\songti\seuwuhao\selectfont
-		\begin{tabular}{ll}
-			\toprule
-			参数 & 值 \\
-			\midrule
-			最大连接数 & 25 \\
-			最小空闲连接 & 15 \\
-			连接超时 & 30s \\
-			最大存活时间 & 30min \\
-			\bottomrule
-		\end{tabular}
-	}
-\end{table}
+%\begin{table}[H]
+%	\centering
+%	\caption{数据库连接池配置}
+%	{\songti\seuwuhao\selectfont
+%		\begin{tabular}{ll}
+%			\toprule
+%			参数 & 值 \\
+%			\midrule
+%			最大连接数 & 25 \\
+%			最小空闲连接 & 15 \\
+%			连接超时 & 30s \\
+%			最大存活时间 & 30min \\
+%			\bottomrule
+%		\end{tabular}
+%	}
+%\end{table}
 
 \FloatBarrier
 \section{功能测试}
@@ -74,7 +74,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.8\linewidth]{imgs/res/BU工时趋势图.png}
-	\caption{BU详情}
+	\caption{BU-ICT2详情}
 	\label{fig:res-bu-detail-linechart}
 \end{figure}
 
@@ -274,9 +274,30 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 \end{table}
 
 \subsection{性能测试}
-系统在开发过程中主要在缺陷查询以及BU工时统计部分遇到了加载较慢的问题，因此本小节针对这两个部分进行性能测试。对于深分页来说，主要是测试系统响应时间随着页号的变化趋势；工时则是看SQL的执行时间。
+系统在开发过程中主要在缺陷查询以及BU工时统计部分遇到了加载较慢的问题，因此本小节针对这两个部分进行性能测试。对于深分页来说，主要是测试系统响应时间随着页号的变化趋势；工时则是看SQL的执行计划。
 
-深分页优化前后性能对比如图\ref{fig:deep_page_performance_comparison}所示。测试结果表明，当偏移量达到百万级别时，传统的直接分页查询耗时急剧上升，严重影响用户体验。而采用优化后的分页方案，其查询响应时间稳定在百毫秒级别。
+(1) 缺陷查询深分页性能测试
+
+本文采用 AOP 切面方式对方法进行耗时测量。通过在待测方法上添加自定义注解，系统在方法执行前后分别记录时间戳，并计算两者差值得到单次查询耗时。该方式避免了在业务方法内部直接插入计时代码，从而降低测试逻辑对业务逻辑的侵入。例如对深分页的测试流程如下，为减少偶然波动对测试结果的影响，每组测试重复执行若干次，并取平均耗时作为最终结果。
+
+\begin{algorithm}[htbp]
+	\caption{深分页查询性能对比测试流程}
+	\KwIn{页码集合 $P$，分页大小 $s$，重复次数 $n$}
+	\KwOut{平均耗时 $\overline{T}_{base}$ 与 $\overline{T}_{opt}$}
+	
+	\ForEach{页码 $p \in P$}{
+		设置分页参数：页码为 $p$，分页大小为 $s$\;
+		\For{$i \leftarrow 1$ \KwTo $n$}{
+			执行普通分页方法并记录耗时 $T_{base}^{i}(p)$\;
+			执行优化分页方法并记录耗时 $T_{opt}^{i}(p)$\;
+		}
+		计算传统分页平均耗时 $\overline{T}_{base}(p)$\;
+		计算优化分页平均耗时 $\overline{T}_{opt}(p)$\;
+	}
+\end{algorithm}
+
+
+深分页优化前后性能对比如图\ref{fig:deep_page_performance_comparison}所示。测试结果表明，当页号逐渐增大时，传统的直接分页查询耗时上升较快。而采用优化后的分页方案，其查询响应时间稳定在百毫秒级别。
 \begin{figure}[!htbp]          % 使用 [!htbp] 避免过多空白
 	\centering
 	\includegraphics[width=1.0\linewidth]{imgs/res/performance_comparison.pdf}
@@ -284,22 +305,27 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 	\label{fig:deep_page_performance_comparison}
 \end{figure}
 
-\begin{table}[H]
+(2) BU 工时性能测试
+
+在第五章的分析部分，提到了部门投入 BU 工时统计功能需要按照月份汇总各业务部门的工时投入情况。初始实现在筛选月份时使用\texttt{DATE\_FORMAT(w.work\_date, '\%Y-\%c')} 对工时日期字段进行格式化处理，再与目标年月进行比较。该写法虽然能够实现月份筛选，但由于在索引字段上使用了函数计算，数据库难以直接利用
+\texttt{work\_date} 字段上的索引进行范围定位，可能导致大规模数据下扫描行数增加。针对上述问题，本文将月份筛选条件改写为日期范围查询。优化前后的执行计划对比如表~\ref{tab:sql-exec-plan}所示。
+\begin{table}[htbp]
 	\centering
-	\caption{性能测试用例表}
-	\label{tab:performance_testcase}
-	{\songti\seuwuhao\selectfont
-		\begin{tabular}{p{0.8cm} p{2.4cm} p{3.2cm} p{3.6cm} p{2.2cm}}
-			\toprule
-			\textbf{编号} & \textbf{测试用例} & \textbf{测试步骤} & \textbf{预期结果} & \textbf{测试结果} \\
-			\midrule
-			TC25 & 工时查询响应 & 用户查询整个公司的BU公司分布 & 响应时间不超过2秒 & 响应时间小于1秒 \\
-			\addlinespace[2pt]
-			TC26 & 重大问题excel导出 & 在重大问题管理界面点击excel导出 & 响应时间不超过2秒 & 响应时间小于1秒 \\
-			\bottomrule
-		\end{tabular}
-	}
+	\caption{查询执行计划对比}
+	\begin{tabular}{lllll}
+		\toprule
+		版本 & type & key & Extra \\
+		\midrule
+		优化前 & ALL & NULL & Using where; Using temporary; Using filesort \\
+		优化后 & range & idx\_wh\_work\_date & Using index condition; Using temporary; Using filesort \\
+		\bottomrule
+	\end{tabular}
+	\label{tab:sql-exec-plan}
 \end{table}
+
+由表可知，优化前查询的访问类型为 \texttt{ALL}，表示数据库需要对\texttt{tb\_sync\_wh} 表进行全表扫描且 key 列为\texttt{NULL}。其主要原因在于对 \texttt{work\_date} 这个索引使用了函数操作，使得该索引失效了。
+
+优化后，查询条件被改写为基于日期区间的范围查询，访问类型由 \texttt{ALL} 变为\texttt{range}，\texttt{Extra} 中出现了\texttt{Using index condition}，并实际使用了 \texttt{idx\_wh\_work\_date} 索引。这说明优化后的查询能够利用日期索引缩小扫描范围，从而降低数据库在工时明细表上的数据访问成本。
 
 \section{本章小结}
 本章对实现的企业级汽车数字化运营平台进行了全面、系统的测试。首先明确了测试所依赖的软件基础环境；其次，通过测试用例覆盖了各个核心功能模块，验证了系统业务逻辑的准确性；最后，通过开展边界测试、安全性验证及性能测试等非功能性测试，证明了系统各项指标均达到了预期的设计要求，具备较高的可用性与安全性。
