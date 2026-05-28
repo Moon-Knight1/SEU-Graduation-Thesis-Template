@@ -1,5 +1,5 @@
 \chapter{系统测试}
-系统测试是保证系统质量的关键，核心目的是验证系统是否满足需求规格，并确保其能够稳定、安全地交付给用户使用。本章对所实现的功能进行测试。对系统的项目管理、缺陷管理、重大问题管理、BU工时统计这几个核心功能模块进行展示与测试，最后从系统的响应时间指标等对系统的非功能性需求进行测试和评估。
+系统测试是保证系统质量的关键，核心目的是验证系统是否满足需求规格，并确保其能够稳定、安全地交付给用户使用\cite{iso25010_2023}。本章对所实现的功能进行测试。对系统的项目管理、缺陷管理、重大问题管理、BU工时统计这几个核心功能模块进行展示与测试，最后从系统的响应时间指标等对系统的非功能性需求进行测试和评估。
 \section{测试环境}
 为保证系统测试结果的真实性与有效性，首先需要明确软件的开发环境。以下列出了服务端、数据库、缓存中间件及前端界面的运行基础配置参数与版本信息，为后续各项测试的顺利开展提供一致的基准支撑。
 % 表 6.1：软件环境
@@ -67,13 +67,13 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/res/BU工时饼图.png}
+	\includegraphics[width=0.75\linewidth]{imgs/res/BU工时饼图.png}
 	\caption{BU投入分析饼图}
 	\label{fig:res-bu-hour-piechart}
 \end{figure}
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/res/BU工时趋势图.png}
+	\includegraphics[width=0.75\linewidth]{imgs/res/BU工时趋势图.png}
 	\caption{BU-ICT2详情}
 	\label{fig:res-bu-detail-linechart}
 \end{figure}
@@ -108,21 +108,58 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/res/项目基本信息列表图.png}
+	\includegraphics[width=0.75\linewidth]{imgs/res/项目基本信息列表图.png}
 	\caption{项目基本信息管理}
 	\label{fig:res-project-list}
 \end{figure}
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/res/项目交付历史时间轴.png}
+	\includegraphics[width=0.75\linewidth]{imgs/res/项目交付历史时间轴.png}
 	\caption{项目交付历史}
 	\label{fig:res-project-weekly}
 \end{figure}
 
 \FloatBarrier
 \subsection{缺陷管理测试}
-缺陷管理模块整合了Trinity、Jira和BugClose三个数据源的缺陷数据，查询结果如图\ref{fig:res-bug-pagequery}所示，除了提供基础的查询功能，还包括以聚类为维度提供多项目缺陷看板。用户点击菜单侧边栏后，主页面以表格形式展示各聚类的未解决总数、新增数、解决数、关闭率等关键指标，并以红黄绿灯状态标识项目健康度，点击状态灯会弹出预警弹窗，点击按钮可以提醒相关人员，如图\ref{fig:res-bug-cluster-feishu}所示。点击聚类名称可进一步查看其下各项目的缺陷详单，如图\ref{fig:res-bug-cluster-detail}所示。
+缺陷管理模块整合了Trinity、Jira和BugClose三个数据源的缺陷数据，查询结果如图\ref{fig:res-bug-pagequery}所示。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.75\linewidth]{imgs/res/项目缺陷报表.png}
+	\caption{项目缺陷报表}
+	\label{fig:res-bug-pagequery}
+\end{figure}
+
+除了提供基础的查询功能，还包括以聚类为维度提供多项目缺陷看板。用户点击菜单侧边栏后，主页面以表格形式展示各聚类的未解决总数、新增数、解决数、关闭率等关键指标，并以红黄绿灯状态标识项目健康度，点击状态灯会弹出预警弹窗，点击按钮可以提醒相关人员，如图\ref{fig:res-bug-cluster-feishu}所示。点击聚类名称可进一步查看其下各项目的缺陷详单，如图\ref{fig:res-bug-cluster-detail}所示。
+%\begin{figure}[htbp]
+%	\centering
+%	\includegraphics[width=0.75\linewidth]{imgs/res/缺陷聚类飞书通知弹窗.png}
+%	\caption{缺陷飞书预警}
+%	\label{fig:res-bug-cluster-feishu}
+%\end{figure}
+%\begin{figure}[htbp]
+%	\centering
+%	\includegraphics[width=0.75\linewidth]{imgs/res/项目聚类统计报表.png}
+%	\caption{项目聚类缺陷详单}
+%	\label{fig:res-bug-cluster-detail}
+%\end{figure}
+\begin{figure}[htbp]
+	\centering
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{imgs/res/缺陷聚类飞书通知弹窗.png}
+		\caption{缺陷飞书预警}
+		\label{fig:res-bug-cluster-feishu}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{imgs/res/项目聚类统计报表.png}
+		\caption{项目聚类缺陷详单}
+		\label{fig:res-bug-cluster-detail}
+	\end{subfigure}
+\end{figure}
+
 \begin{table}[H]
 	\centering
 	\caption{缺陷管理接口测试用例}
@@ -147,31 +184,41 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 \end{table}
 % 此处保留一个空行，符合”表格与下文空一行”的要求
 
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/res/项目缺陷报表.png}
-	\caption{项目缺陷报表}
-	\label{fig:res-bug-pagequery}
-\end{figure}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/res/缺陷聚类飞书通知弹窗.png}
-	\caption{缺陷飞书预警}
-	\label{fig:res-bug-cluster-feishu}
-\end{figure}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/res/项目聚类统计报表.png}
-	\caption{项目聚类缺陷详单}
-	\label{fig:res-bug-cluster-detail}
-\end{figure}
-
-\FloatBarrier
 \subsection{重大问题管理测试}
 重大问题管理模块用于记录和跟踪项目执行过程中出现的重大异常事件，覆盖问题从发现登记、根因分析、
-方案制定到实施关闭的完整闭环流程，重大问题管理页面如图\ref{fig:serious-problem}所示。同时集成了飞书卡片通知机制，在问题新增时自动推送消息至相关责任人，飞书卡片消息提醒效果如图\ref{fig:feishu-message-serious-problem}所示。这个模块还支持图表来可视化重大问题的分布情况，统计结果如图\ref{fig:serious-problem-statistics}所示，便于了解哪些项目的重大问题比较突出。
+方案制定到实施关闭的完整闭环流程，重大问题管理页面如图\ref{fig:serious-problem}所示。
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.65\linewidth]{imgs/res/重大问题管理界面图.png}
+	\caption{重大问题管理界面}
+	\label{fig:serious-problem}
+\end{figure}
+
+同时集成了飞书卡片通知机制，在问题新增时自动推送消息至相关责任人，飞书卡片消息提醒效果如图\ref{fig:feishu-message-serious-problem}所示。这个模块还支持图表来可视化重大问题的分布情况，统计结果如图\ref{fig:serious-problem-statistics}所示，便于了解哪些项目的重大问题比较突出。
+\begin{figure}[htbp]
+	\centering
+	\begin{subfigure}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[width=0.68\linewidth]{imgs/res/重大问题新增通知图.png}
+		\caption*{(a) 重大问题新增通知}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.45\textwidth}
+		\centering
+		\includegraphics[width=0.68\linewidth]{imgs/res/重大问题关闭时间提醒图.png}
+		\caption*{(b) 重大问题关闭时间提醒}
+	\end{subfigure}
+	\caption{飞书消息通知}
+	\label{fig:feishu-message-serious-problem}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.75\linewidth]{imgs/res/重大问题统计分析.png}
+	\caption{重大问题统计分析}
+	\label{fig:serious-problem-statistics}
+\end{figure}
+
 \begin{table}[H]
 	\centering
 	\caption{重大问题管理接口测试用例}
@@ -196,37 +243,6 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 		\end{tabular}
 	}
 \end{table}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/res/重大问题管理界面图.png}
-	\caption{重大问题管理界面}
-	\label{fig:serious-problem}
-\end{figure}
-
-\begin{figure}[htbp]
-	\centering
-	\begin{subfigure}[b]{0.45\textwidth}
-		\centering
-		\includegraphics[width=0.68\linewidth]{imgs/res/重大问题新增通知图.png}
-		\caption*{(a) 重大问题新增通知}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[b]{0.45\textwidth}
-		\centering
-		\includegraphics[width=0.68\linewidth]{imgs/res/重大问题关闭时间提醒图.png}
-		\caption*{(b) 重大问题关闭时间提醒}
-	\end{subfigure}
-	\caption{飞书消息通知}
-	\label{fig:feishu-message-serious-problem}
-\end{figure}
-
-\begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/res/重大问题统计分析.png}
-	\caption{重大问题统计分析}
-	\label{fig:serious-problem-statistics}
-\end{figure}
 
 \subsection{各功能的边界测试}
 {\songti\seuwuhao\selectfont
@@ -300,14 +316,14 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 深分页优化前后性能对比如图\ref{fig:deep_page_performance_comparison}所示。测试结果表明，当页号逐渐增大时，传统的直接分页查询耗时上升较快。而采用优化后的分页方案，其查询响应时间稳定在百毫秒级别。
 \begin{figure}[!htbp]          % 使用 [!htbp] 避免过多空白
 	\centering
-	\includegraphics[width=1.0\linewidth]{imgs/res/performance_comparison.pdf}
+	\includegraphics[width=0.8\linewidth]{imgs/res/performance_comparison.pdf}
 	\caption{优化前后页面加载性能对比}   % 图序按章编号（第6章）
 	\label{fig:deep_page_performance_comparison}
 \end{figure}
 
 (2) BU 工时性能测试
 
-在第五章的分析部分，提到了部门投入 BU 工时统计功能需要按照月份汇总各业务部门的工时投入情况。初始实现在筛选月份时使用\texttt{DATE\_FORMAT(w.work\_date, '\%Y-\%c')} 对工时日期字段进行格式化处理，再与目标年月进行比较。该写法虽然能够实现月份筛选，但由于在索引字段上使用了函数计算，数据库难以直接利用
+在第五章的分析部分，提到了部门投入 BU 工时统计功能需要按照月份汇总各业务部门的工时投入情况。初始实现在筛选月份时使用\texttt{DATE\_FORMAT} 函数对工时日期字段进行格式化处理，再与目标年月进行比较。该写法虽然能够实现月份筛选，但由于在索引字段上使用了函数计算，数据库难以直接利用
 \texttt{work\_date} 字段上的索引进行范围定位，可能导致大规模数据下扫描行数增加。针对上述问题，本文将月份筛选条件改写为日期范围查询。优化前后的执行计划对比如表~\ref{tab:sql-exec-plan}所示。
 \begin{table}[htbp]
 	\centering

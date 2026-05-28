@@ -25,6 +25,10 @@
 	captionpos=b
 }
 
+\setlength{\textfloatsep}{10pt}    % 双栏浮动体与正文间距（单栏也生效）
+\setlength{\floatsep}{8pt}         % 浮动体之间的间距
+\setlength{\intextsep}{8pt}        % [h] 浮动体与上下文的间距
+
 \newcommand{\demobox}[2]{\fbox{\rule{0pt}{#2}\rule{#1}{0pt}}}
 
 \addkey{汽车电子软件}{Automotive Electronic Software}
@@ -58,7 +62,7 @@
 
 \seuaiitem{
   tool_version = {DeepSeek-V4},
-  process = {在使用PlantUML,Mermaid,Drawio等网站画图时，辅助生成网站语法的代码，图的结构和内容有本人设计修改},
+  process = {在使用PlantUML,Mermaid等网站画图时，辅助生成网站语法的代码，图的结构和内容有本人设计修改},
   pages   = {第二章 1.1（P5）、第二章 1.2（P7）}
 }
 

@@ -1,10 +1,10 @@
 \chapter{核心业务模块的详细设计与实现}
 上一个章节从整体架构、功能模块等层面对系统进行了宏观设计，明确了各模块的职责。在此基础上，本章将对系统的核心模块展开详细设计，将概要设计转化为可落地代码方案。本章从系统的各个模块和几个关键点设计出发，结合类图与时序图来解释类之间的关系以及核心方法的业务逻辑，为后续的系统实现与测试提供关键性的保障。
 
-\section{系统各模块设计}
+\section{模块设计}
 这个系统所有模块在工程上都采用了标准的Controller、Service、Mapper三层架构。Controller层定义接口的请求方式、请求路径以及请求参数等，负责接收请求，调用 Service 处理业务逻辑；Service层处理核心业务逻辑和事务，以及调用Mapper或外部服务；Mapper层与数据库进行交互，对于一些复杂的多表操作，由于 Mybatis-plus 只是提供了一些简单的单表操作，因此我们需要在xml文件中编写相应的SQL语句。对于数据查询操作，封装了查询请求基类 QueryRequest ，便于其他模块复用统一的分页（页号，页大小）与排序规则（排序字段、升序开关）属性，各个模块可以根据需求继承该类来扩展特定的业务查询维度。控制层在收到业务层的返回结果后，统一由 FebsResponse 包装后响应给前端。
 
-\subsection{BU工时投入分析}
+\subsection{部门投入BU工时分布}
 部门当月投入到各BU（业务单元）的工时分布，是企业管理人力资源调配的重要可视化视图。当前界面默认加载当月的公司整体BU工时饼图，用户也可通过年份加月份进行历史数据查询。该模块还可展示某BU的工时详情，包括总工时、平均工时、工时占比、加班工时及工时趋势等关键指标。这些指标数据为项目成本核算与业务决策提供客观的数据支撑。
 
 （1）类图设计
@@ -13,7 +13,7 @@ WorkHourController 作为工时管理模块的控制层类，主要负责接收�
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=1.0\linewidth]{imgs/class/BU工时类图.png}
+	\includegraphics[width=0.8\linewidth]{imgs/class/BU工时类图.png}
 	\caption{BU工时统计类图}
 	\label{fig:class-bu-hour}
 \end{figure}
@@ -27,7 +27,7 @@ WorkHourController 作为工时管理模块的控制层类，主要负责接收�
 BU工时分布统计用于展示指定年月、指定组织范围内各 BU 的工时占比情况，其核心业务流转如图\ref{fig:seq-bu-hour-distribution}所示。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=1.0\linewidth]{imgs/Seq/BU工时饼图时序图.png}
+	\includegraphics[width=0.8\linewidth]{imgs/Seq/BU工时饼图时序图.png}
 	\caption{BU工时饼图时序图}
 	\label{fig:seq-bu-hour-distribution}
 \end{figure}
@@ -41,7 +41,7 @@ BU工时分布统计用于展示指定年月、指定组织范围内各 BU 的�
 当用户需要进一步查看某个 BU 的工时详情，可以点击饼图中对应位置，即可弹框展示详情，其业务逻辑如图\ref{fig:seq-bu-hour-detail}所示。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=1.0\linewidth]{imgs/Seq/BU详情时序图.png}
+	\includegraphics[width=0.8\linewidth]{imgs/Seq/BU详情时序图.png}
 	\caption{BU详情时序图}
 	\label{fig:seq-bu-hour-detail}
 \end{figure}
@@ -66,7 +66,7 @@ BU工时分布统计用于展示指定年月、指定组织范围内各 BU 的�
 在数据访问层中，TbProjectBaseinfoMapper 主要用于操作项目基本信息表，完成项目信息的查询、新增和修改等数据库操作；TbProjectBaseinfoHistoryMapper 主要用于操作项目历史记录相关数据，为项目变更记录查询提供数据支持。ProjectQueryRequest 是项目查询请求对象，用于封装前端传入的查询条件，如 BU 名称和项目名称等。由于项目列表查询通常需要分页和排序功能，因此 ProjectQueryRequest 继承了 QueryRequest。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=1.0\linewidth]{imgs/class/项目基本信息管理类图.png}
+	\includegraphics[width=0.8\linewidth]{imgs/class/项目基本信息管理类图.png}
 	\caption{项目基本信息管理类图}
 	\label{fig:class-project-baseinfo}
 \end{figure}
@@ -74,12 +74,12 @@ BU工时分布统计用于展示指定年月、指定组织范围内各 BU 的�
 由图~\ref{fig:class-project-baseinfo} 可知，TbProjectBaseinfoController 依赖 ITbProjectBaseinfoService 完成业务调用，避免控制层直接处理数据库操作。ITbProjectBaseinfoService 由 TbProjectBaseinfoServiceImpl 实现，具体的项目信息处理逻辑集中在实现类中完成。TbProjectBaseinfoServiceImpl 进一步调用 TbProjectBaseinfoMapper 和 TbProjectBaseinfoHistoryMapper 获取项目基础数据及历史记录数据。由于项目列表查询通常需要分页和排序功能，因此 ProjectQueryRequest 继承 QueryRequest。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=1.0\linewidth]{imgs/Seq/项目信息管理时序图.png}
+	\includegraphics[width=0.8\linewidth]{imgs/Seq/项目信息管理时序图.png}
 	\caption{项目信息管理时序图}
 	\label{fig:seq-project-baseinfo}
 \end{figure}
 
-针对项目基本信息的“新增与更新”流程，系统在后端实现上重点保障了数据的安全性与可追溯性，其核心业务流转如图~\ref{fig:seq-project-baseinfo}所示。我们在 TbProjectBaseinfoController 的新增和更新方法上加上了 @RequiresPermissions 注解，前端发起的 HTTP 请求会先经过请求处理层的 JWT 校验，通过后 Shiro 框架会拦截加了注解的方法，在方法执行前先查询预热到缓存的权限数据，如果没有就去数据库查询，检查当前用户是否有对应权限，并利用 \texttt{@Valid} 完成参数的合法性校验。进入业务层后，系统采用“主表+历史表”的双写策略：首先将最新的项目信息更新至MySQL主表；随后，通过构建当前操作的完整数据快照（涵盖新旧值、操作人及操作类型），并写入项目信息快照表。这种快照机制便于后续的项目审计与数据回滚操作。由于部分字段比如"近期交付阀点"和"近期阀点日期"修改比较频繁，可能导致快照表的体积变得太大，因此针对这部分的修改历史保存到交付历史变更表中。由于更新操作修改了多张表，需要在业务层的方法上加上 @Transactional 注解，将多表更新操作限制在单一事务中，以确保原子性和一致性。需要注意的是，在实际开发中，并不是在方法上加注解就可以高枕无忧了，事务包裹的范围应该尽可能小，否则可能会导致长事务的出现，很容易耗尽连接池导致数据库崩溃，同时长期持有的锁会引发大范围阻塞，并因阻碍日志清理而拖垮数据库性能。此外还要考虑注解失效的情景，避免在开发中犯这类错误。
+针对项目基本信息的“新增与更新”流程，系统在后端实现上重点保障了数据的安全性与可追溯性，其核心业务流转如图~\ref{fig:seq-project-baseinfo}所示。我们在 TbProjectBaseinfoController 的新增和更新方法上加上了 @RequiresPermissions 注解，前端发起的 HTTP 请求会先经过请求处理层的 JWT 校验，通过后 Shiro 框架会拦截加了注解的方法，在方法执行前先查询预热到缓存的权限数据，如果没有就去数据库查询，检查当前用户是否有对应权限，并利用 \texttt{@Valid} 完成参数的合法性校验\cite{owasp2023api,nist800207_2020,nist800204b_2021}。进入业务层后，系统采用“主表+历史表”的双写策略：首先将最新的项目信息更新至MySQL主表；随后，通过构建当前操作的完整数据快照（涵盖新旧值、操作人及操作类型），并写入项目信息快照表。这种快照机制便于后续的项目审计与数据回滚操作。由于部分字段比如"近期交付阀点"和"近期阀点日期"修改比较频繁，可能导致快照表的体积变得太大，因此针对这部分的修改历史保存到交付历史变更表中。由于更新操作修改了多张表，需要在业务层的方法上加上 @Transactional 注解，将多表更新操作限制在单一事务中，以确保原子性和一致性。需要注意的是，在实际开发中，并不是在方法上加注解就可以高枕无忧了，事务包裹的范围应该尽可能小，否则可能会导致长事务的出现，很容易耗尽连接池导致数据库崩溃，同时长期持有的锁会引发大范围阻塞，并因阻碍日志清理而拖垮数据库性能。此外还要考虑注解失效的情景，避免在开发中犯这类错误。
 
 \subsection{缺陷管理}
 在企业实际研发过程中，项目缺陷数据来源较为分散，企业内部同时使用了 Trinity、Jira 以及 BugClose 这三个缺陷管理平台。其中，Trinity 为企业内部平台，另外两个是主流的缺陷管理工具。三个平台在使用过程中都会产生缺陷相关数据，如缺陷编号、缺陷标题、所属项目、缺陷状态、严重程度、责任人、创建时间、关闭时间等，这些数据共同反映了缺陷从发现到解决的处理过程。但是各平台的字段设计也存在一些差异，在系统中会用三张表格进行存储，以保留各平台原有字段及业务含义。缺陷管理模块需要对这些缺陷表进行统一管理，聚合统计出缺陷的解决比率。通过数据汇聚与指标计算，为项目质量人员提供多维度的缺陷质量看板。
@@ -89,7 +89,7 @@ BugController 作为控制层，负责接收前端请求，并调用对应的业
 缺陷管理类图如图\ref{fig:class-bug}所示。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=1.0\linewidth]{imgs/class/缺陷管理类图.png}
+	\includegraphics[width=0.8\linewidth]{imgs/class/缺陷管理类图.png}
 	\caption{缺陷管理类图}
 	\label{fig:class-bug}
 \end{figure}
@@ -100,7 +100,7 @@ BugController 作为控制层，负责接收前端请求，并调用对应的业
 缺陷管理部分主要包括缺陷数据的分页查询以及项目聚类缺陷统计，其中，项目聚类缺陷统计的业务流程如图\ref{fig:seq-bug-cluster}所示。
 \begin{figure}[!htbp]
 	\centering
-	\includegraphics[width=1.0\linewidth]{imgs/Seq/项目聚类缺陷统计时序图.png}
+	\includegraphics[width=0.8\linewidth]{imgs/Seq/项目聚类缺陷统计时序图.png}
 	\caption{项目聚类缺陷统计时序图}
 	\label{fig:seq-bug-cluster}
 \end{figure}
@@ -148,7 +148,7 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 重大问题管理模块面向项目执行过程中影响范围较大、处理周期较长或需要跨部门协调的问题，大致可分为问题登记、问题处理和问题关闭三个阶段。具体流程如图\ref{fig:serious-problem-process}所示。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=1.0\linewidth]{imgs/Flowchart/重大问题流程图.drawio.png}
+	\includegraphics[width=0.8\linewidth]{imgs/Flowchart/重大问题流程图.drawio.png}
 	\caption{重大问题流程图}
 	\label{fig:serious-problem-process}
 \end{figure}
@@ -156,7 +156,7 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 重大问题管理功能围绕 TbProjectSeriousProblem 业务对象展开，主要实现重大问题的分页查询、新增修改、数据导出以及飞书提醒等操作。控制层 TbProjectSeriousProblemController 负责接收前端请求，并将具体业务处理交给服务层完成；服务层 TbProjectSeriousProblemServiceImpl 负责重大问题数据的查询处理、人员信息补全以及提醒消息组织；数据访问层 TbProjectSeriousProblemMapper 负责完成重大问题数据的数据库查询。除此之外，TbProjectSeriousProblemQueryRequest 用于封装前端传入的查询条件，使接口参数更加清晰。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=1.0\linewidth]{imgs/class/重大问题管理类图.png}
+	\includegraphics[width=0.8\linewidth]{imgs/class/重大问题管理类图.png}
 	\caption{重大问题管理类图}
 	\label{fig:class-serious-problem}
 \end{figure}
@@ -166,7 +166,7 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 重大问题管理的核心业务流程如图\ref{fig:seq-serious-problem}所示。用户进入列表页面后，系统首先根据当前登录用户的身份判断其权限，查询并展示其可见的问题记录。用户可通过顶部筛选栏按多维度条件进行检索，也可点击"新增"按钮创建新的重大问题。
 \begin{figure}[!htbp]
 	\centering
-	\includegraphics[width=1.0\linewidth]{imgs/Seq/重大问题时序图.png}
+	\includegraphics[width=0.8\linewidth]{imgs/Seq/重大问题时序图.png}
 	\caption{重大问题时序图}
 	\label{fig:seq-serious-problem}
 \end{figure}
@@ -176,10 +176,10 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 \section{数据库设计}
 为说明系统中各业务数据对象之间的关系，本文首先给出数据库的总体逻辑 ER 图，如图 \ref{fig:er-overall} 所示。该图从业务对象角度抽象出组织、员工、项目、缺陷、重大问题、项目聚类和聚类缺陷快照等核心实体，并描述各实体之间的主要关联关系。后续小节将在此基础上分别说明关键数据表的字段设计。
 
-\subsection{数据库总体设计}
+\subsection{概念逻辑设计}
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=1.0\linewidth]{imgs/ER/er-diagram-without.png}
+	\includegraphics[width=0.8\linewidth]{imgs/ER/er-diagram-without.png}
 	\caption{数据库E-R图}
 	\label{fig:er-overall}
 \end{figure}
@@ -197,13 +197,13 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 
 总体来看，该数据库模型以项目为中心，将人员组织、缺陷数据、重大问题、工时记录、交付历史和聚类统计数据连接起来。组织和员工实体提供人员归属关系，项目实体承载项目基础信息，缺陷和重大问题实体记录项目执行过程中的质量问题，项目聚类和聚类 Bug 快照实体则面向跨项目统计分析。由于部分业务数据来源于外部同步表，实际物理表中并非所有关系都采用数据库外键约束，图中的关系主要用于描述系统业务对象之间的逻辑关联。
 
-\subsection{数据表结构设计}
+\subsection{数据表设计}
 在数据库总体设计的基础上，本节进一步说明系统主要业务表的结构设计。
 \begin{enumerate}[label=(\arabic*)]	
 	\item BU工时统计主要用于分析各个组织部门在业务单元的工时投入情况，涉及的实体包括组织树（\texttt{tb\_org\_tree}）、员工基础信息（\texttt{tb\_emp\_baseinfo}）、项目列表（\texttt{tb\_project\_\allowbreak baseinfo\_\allowbreak new}）和工时记录（\texttt{tb\_sync\_wh}，其关系如图\ref{fig:er-org-wh}所示。
 	\begin{figure}[htbp]
 		\centering
-		\includegraphics[width=0.7\linewidth]{imgs/ER/工时.png}
+		\includegraphics[width=0.8\linewidth]{imgs/ER/工时.png}
 		\caption{工时数据库关系图}
 		\label{fig:er-org-wh}
 	\end{figure}
@@ -223,13 +223,15 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 	
 	
 	\item 
-	项目 Bug 聚类统计主要用于对多个项目的缺陷数据进行汇总分析，支撑聚类维度的质量看板展示。该部分涉及的实体包括项目基础信息（\texttt{tb\_project\_\allowbreak baseinfo\_\allowbreak new}）、Trinity 缺陷同步表（\texttt{tb\_sync\_bug}）、Jira 问题同步表（\texttt{tb\_sync\_jira}）、BugClose 缺陷同步表（\texttt{tb\_sync\_\allowbreak bugclose}）、项目聚类映射表（\texttt{tb\_project\_\allowbreak cluster}）和聚类每日 Bug 统计快照表（\texttt{tb\_bug\_\allowbreak cluster\_\allowbreak daily\_\allowbreak snapshot}），其关系如图\ref{fig:er-bug-cluster}所示。
+	项目 Bug 聚类统计主要用于对多个项目的缺陷数据进行汇总分析，支撑聚类维度的质量看板展示。
 	\begin{figure}[htbp]
 		\centering
-		\includegraphics[width=0.9\linewidth]{imgs/ER/项目聚类Bug.png}
+		\includegraphics[width=0.8\linewidth]{imgs/ER/项目聚类Bug.png}
 		\caption{项目 Bug 聚类数据库关系图}
 		\label{fig:er-bug-cluster}
 	\end{figure}
+	
+	该部分涉及的实体包括项目基础信息（\texttt{tb\_project\_\allowbreak baseinfo\_\allowbreak new}）、Trinity 缺陷同步表（\texttt{tb\_sync\_bug}）、Jira 问题同步表（\texttt{tb\_sync\_jira}）、BugClose 缺陷同步表（\texttt{tb\_sync\_\allowbreak bugclose}）、项目聚类映射表（\texttt{tb\_project\_\allowbreak cluster}）和聚类每日 Bug 统计快照表（\texttt{tb\_bug\_\allowbreak cluster\_\allowbreak daily\_\allowbreak snapshot}），其关系如图\ref{fig:er-bug-cluster}所示。
 	
 	\verb|tb_sync_bug|、\verb|tb_sync_jira| 和 \verb|tb_sync_bugclose| 分别保存来自不同缺陷系统的同步数据，主要字段包括缺陷编号、项目编号、缺陷状态、严重度、责任人、修复人、创建时间、修复时间和关闭时间等。由于三类缺陷数据来源不同，字段命名和状态取值存在差异，系统在统计时根据项目编号或项目名称进行匹配，并在业务层统一计算当前未解决数、新增数、解决数和关闭率等指标。项目聚类映射表 \verb|tb_project_cluster| 用于维护聚类名称与项目名称之间的对应关系，系统根据该表确定一个聚类包含的项目范围。聚类每日 Bug 统计快照表 \verb|tb_bug_cluster_daily_snapshot| 用于保存聚类维度下的每日统计结果，包括快照日期、聚类名称、项目列表、当前未解决总数、今日新增、今日解决、超期未解决数量和关闭率等字段，用于后续趋势分析和历史数据查询。
 	
@@ -237,7 +239,7 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 	重大问题管理主要用于记录项目执行过程中需要重点跟踪的问题，并支撑问题登记、责任人处理、问题上升和闭环管理。该部分涉及的实体包括项目基础信息（\texttt{tb\_project\_\allowbreak baseinfo\_\allowbreak new}）、员工基础信息（\texttt{tb\_emp\_\allowbreak baseinfo}）、组织架构（\texttt{tb\_org\_tree}）和项目重大问题表（\texttt{tb\_project\_\allowbreak serious\_\allowbreak problem\_\allowbreak new}），其关系如图\ref{fig:er-serious-problem}所示。
 	\begin{figure}[htbp]
 		\centering
-		\includegraphics[width=0.85\linewidth]{imgs/ER/重大问题.png}
+		\includegraphics[width=0.8\linewidth]{imgs/ER/重大问题.png}
 		\caption{重大问题管理数据库关系图}
 		\label{fig:er-serious-problem}
 	\end{figure}
