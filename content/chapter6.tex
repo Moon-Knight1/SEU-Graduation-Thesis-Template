@@ -1,5 +1,5 @@
 \chapter{系统测试}
-系统测试是保证系统质量的关键，核心目的是验证系统是否满足需求规格，并确保其能够稳定、安全地交付给用户使用\cite{iso25010_2023}。本章对所实现的功能进行测试。对系统的项目管理、缺陷管理、重大问题管理、BU工时统计这几个核心功能模块进行展示与测试，最后从系统的响应时间指标等对系统的非功能性需求进行测试和评估。
+系统测试是保证系统质量的关键，核心目的是验证系统是否满足需求规格，并确保其能够稳定、安全地交付给用户使用。本章对所实现的功能进行测试。对系统的项目管理、缺陷管理、重大问题管理、BU工时统计这几个核心功能模块进行展示与测试，最后从系统的响应时间指标等对系统的非功能性需求进行测试和评估。
 \section{测试环境}
 为保证系统测试结果的真实性与有效性，首先需要明确软件的开发环境。以下列出了服务端、数据库、缓存中间件及前端界面的运行基础配置参数与版本信息，为后续各项测试的顺利开展提供一致的基准支撑。
 % 表 6.1：软件环境
@@ -45,7 +45,7 @@
 \FloatBarrier
 \section{功能测试}
 功能性测试旨在验证系统各项业务模块是否严格符合业务规格说明书的需求。本节将从实际的企业运营场景出发，依序对BU工时统计分析、项目基本信息管理、缺陷管理以及重大问题管理四个核心业务模块展开黑盒测试，以确保核心功能的逻辑正确性与数据完整性。
-\subsection{BU工时统计分析功能测试}
+\subsection{部门投入BU工时分布功能测试}
 BU工时统计分析主要为了让管理层能在宏观上把控整个南京在各个BU的工时投入占比，以及特定BU模块的详细工时，便于即时对比BU的整体工时投入情况和预算数据,从而进行及时的管理干预。用户进入该界面后，系统默认展示当月工时数据及投入BU的占比情况，页面展示效果如图\ref{fig:res-bu-hour-piechart}所示，用户可以点击部门下拉框，就可以看到树状的组织结构进行选择，也可以点击时间进行选择。点击某个BU模块后就会弹出BU详情对话框，显示总工时、平均工时、加班工时等数据，并以折线图的形式展示近六个月以来公司投入到该BU的工时趋势，页面效果如图\ref{fig:res-bu-detail-linechart}所示。
 
 \begin{table}[H]
@@ -68,7 +68,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.75\linewidth]{imgs/res/BU工时饼图.png}
-	\caption{BU投入分析饼图}
+	\caption{BU工时分布饼图}
 	\label{fig:res-bu-hour-piechart}
 \end{figure}
 \begin{figure}[htbp]
@@ -108,14 +108,14 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.75\linewidth]{imgs/res/项目基本信息列表图.png}
+	\includegraphics[width=0.9\linewidth]{imgs/res/项目基本信息列表图.png}
 	\caption{项目基本信息管理}
 	\label{fig:res-project-list}
 \end{figure}
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.75\linewidth]{imgs/res/项目交付历史时间轴.png}
+	\includegraphics[width=0.8\linewidth]{imgs/res/项目交付历史时间轴.png}
 	\caption{项目交付历史}
 	\label{fig:res-project-weekly}
 \end{figure}
@@ -125,7 +125,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 缺陷管理模块整合了Trinity、Jira和BugClose三个数据源的缺陷数据，查询结果如图\ref{fig:res-bug-pagequery}所示。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.75\linewidth]{imgs/res/项目缺陷报表.png}
+	\includegraphics[width=0.8\linewidth]{imgs/res/项目缺陷报表.png}
 	\caption{项目缺陷报表}
 	\label{fig:res-bug-pagequery}
 \end{figure}
@@ -171,7 +171,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 			\midrule
 			TC09 & 缺陷查询 & 点击缺陷查询菜单栏下的分类 & 各自返回对应数据源的缺陷列表 & 符合预期 \\
 			\addlinespace[2pt]
-			TC10 & 聚类统计列表查询 & 在该页面按聚类名称/SPM/灯状态筛选 & 表格按条件正确显示 & 符合预期 \\
+			TC10 & 聚类统计列表查询 & 在该页面按聚类名称/项目经理/灯状态筛选 & 表格按条件正确显示 & 符合预期 \\
 			\addlinespace[2pt]
 			TC11 & 发送飞书预警 & 点击状态灯，弹出预警话术， & 弹出预警话术，可发送飞书预警 & 符合预期 \\
 			\addlinespace[2pt]
@@ -189,7 +189,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 方案制定到实施关闭的完整闭环流程，重大问题管理页面如图\ref{fig:serious-problem}所示。
 \begin{figure}[H]
 	\centering
-	\includegraphics[width=0.65\linewidth]{imgs/res/重大问题管理界面图.png}
+	\includegraphics[width=0.6\linewidth]{imgs/res/重大问题管理界面图.png}
 	\caption{重大问题管理界面}
 	\label{fig:serious-problem}
 \end{figure}
@@ -238,7 +238,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 			\addlinespace[2pt]
 			TC18 & 导出 Excel & 点击导出 & 下载 xlsx 文件 & 符合预期 \\
 			\addlinespace[2pt]
-			TC19 & 通知 SPM & 点击重大问题右侧小喇叭 & 飞书卡片发送至指定 SPM & 符合预期 \\
+			TC19 & 通知项目经理 & 点击重大问题右侧小喇叭 & 飞书卡片发送至指定项目经理 & 符合预期 \\
 			\bottomrule
 		\end{tabular}
 	}
@@ -283,7 +283,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 			\toprule
 			\textbf{编号} & \textbf{测试用例} & \textbf{测试步骤} & \textbf{预期结果} & \textbf{测试结果} \\
 			\midrule
-			TC24 & 重大问题可见性 & 由于没有管理员的账号密码，选择在代码部分将登录用户uid分别设置为管理员,SPM，普通用户 & 管理员可以看到所有重大问题，其他人只能看到和自己相关的重大问题 & 符合预期 \\
+			TC24 & 重大问题可见性 & 由于没有管理员的账号密码，选择在代码部分将登录用户uid分别设置为管理员,项目经理，普通用户 & 管理员可以看到所有重大问题，其他人只能看到和自己相关的重大问题 & 符合预期 \\
 			\bottomrule
 		\end{tabular}
 	}
@@ -294,7 +294,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 
 (1) 缺陷查询深分页性能测试
 
-本文采用 AOP 切面方式对方法进行耗时测量。通过在待测方法上添加自定义注解，系统在方法执行前后分别记录时间戳，并计算两者差值得到单次查询耗时。该方式避免了在业务方法内部直接插入计时代码，从而降低测试逻辑对业务逻辑的侵入。例如对深分页的测试流程如下，为减少偶然波动对测试结果的影响，每组测试重复执行若干次，并取平均耗时作为最终结果。
+为了避免对原有的业务代码侵入，本文采用 AOP 切面方式对方法进行耗时测量。通过在待测方法上添加自定义注解，系统在方法执行前后分别记录时间戳，并计算两者差值得到单次查询耗时。例如对深分页的测试流程如下，为减少偶然波动对测试结果的影响，每组测试重复执行若干次，并取平均耗时作为最终结果。
 
 \begin{algorithm}[htbp]
 	\caption{深分页查询性能对比测试流程}
@@ -312,30 +312,73 @@ BU工时统计分析主要为了让管理层能在宏观上把控整个南京在
 	}
 \end{algorithm}
 
-
-深分页优化前后性能对比如图\ref{fig:deep_page_performance_comparison}所示。测试结果表明，当页号逐渐增大时，传统的直接分页查询耗时上升较快。而采用优化后的分页方案，其查询响应时间稳定在百毫秒级别。
-\begin{figure}[!htbp]          % 使用 [!htbp] 避免过多空白
+\begin{table}[H]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/res/performance_comparison.pdf}
-	\caption{优化前后页面加载性能对比}   % 图序按章编号（第6章）
-	\label{fig:deep_page_performance_comparison}
-\end{figure}
+	\caption{普通分页响应时间}
+	\label{tab:deep-pagination-response-before}
+	{\songti\seuwuhao\selectfont
+		\begin{tabular}{ccccccc}
+			\toprule
+			页号 & 第1次 & 第2次 & 第3次 & 第4次 & 第5次 & 平均值 \\
+			\midrule
+			1   & 18    & 10    & 5     & 16    & 12    & 12.2 \\
+			1K  & 8453  & 5831  & 6626  & 6500  & 6532  & 6788.4 \\
+			2K  & 13874 & 12099 & 14021 & 12327 & 13023 & 13068.8 \\
+			3K  & 22061 & 20695 & 18858 & 21390 & 21262 & 20853.2 \\
+			4K  & 29469 & 29996 & 29816 & 28479 & 28327 & 29217.4 \\
+			5K  & 35338 & 34108 & 35862 & 36300 & 37072 & 35736.0 \\
+			\bottomrule
+		\end{tabular}
+	}
+\end{table}
+
+\begin{table}[H]
+	\centering
+	\caption{深分页优化后响应时间}
+	\label{tab:deep-pagination-response-after}
+	{\songti\seuwuhao\selectfont
+		\begin{tabular}{ccccccc}
+			\toprule
+			页号 & 第1次 & 第2次 & 第3次 & 第4次 & 第5次 & 平均值 \\
+			\midrule
+			1   & 19    & 15    & 10    & 16    & 12    & 14.4 \\
+			1K  & 20    & 50    & 18    & 16    & 28    & 26.4 \\
+			2K  & 51    & 37    & 40    & 25    & 37    & 38.0 \\
+			3K  & 77    & 31    & 46    & 49    & 22    & 45.0 \\
+			4K  & 50    & 77    & 61    & 33    & 92    & 62.6 \\
+			5K  & 26    & 84    & 108   & 59    & 89    & 73.2 \\
+			\bottomrule
+		\end{tabular}
+	}
+\end{table}
+
+根据表\ref{tab:deep-pagination-response-before}和表\ref{tab:deep-pagination-response-after}的数据可知。在页号较小时，优化前后的响应时间差异并不明显，两者均处于较低水平。随着页号不断增大，优化前查询耗时明显上升，1K 页时平均响应时间已达到 6788.4 ms，4K 页时进一步增加到 29217.4 ms，说明传统深分页方式会随着偏移量增加而扫描和丢弃大量无效数据，导致接口响应速度显著下降。
+
+相比之下，优化后的查询响应时间整体保持在几十毫秒范围内，即使页号偏移量到达 5K，平均响应时间也仅为 73.2 ms，未出现随页号增大而明显恶化的情况。这表明优化后的分页方式能够有效减少深分页查询中的无效扫描开销，使查询性能更加稳定。
+%\begin{figure}[!htbp]          % 使用 [!htbp] 避免过多空白
+%	\centering
+%	\includegraphics[width=0.8\linewidth]{imgs/res/performance_comparison.pdf}
+%	\caption{优化前后页面加载性能对比}   % 图序按章编号（第6章）
+%	\label{fig:deep_page_performance_comparison}
+%\end{figure}
 
 (2) BU 工时性能测试
 
 在第五章的分析部分，提到了部门投入 BU 工时统计功能需要按照月份汇总各业务部门的工时投入情况。初始实现在筛选月份时使用\texttt{DATE\_FORMAT} 函数对工时日期字段进行格式化处理，再与目标年月进行比较。该写法虽然能够实现月份筛选，但由于在索引字段上使用了函数计算，数据库难以直接利用
-\texttt{work\_date} 字段上的索引进行范围定位，可能导致大规模数据下扫描行数增加。针对上述问题，本文将月份筛选条件改写为日期范围查询。优化前后的执行计划对比如表~\ref{tab:sql-exec-plan}所示。
+\texttt{work\_date} 字段上的索引进行范围定位，可能导致大规模数据下扫描行数增加。针对上述问题，本文将月份筛选条件改写为日期范围查询。优化前后的执行计划对比如表\ref{tab:sql-exec-plan}所示。
 \begin{table}[htbp]
 	\centering
 	\caption{查询执行计划对比}
-	\begin{tabular}{lllll}
-		\toprule
-		版本 & type & key & Extra \\
-		\midrule
-		优化前 & ALL & NULL & Using where; Using temporary; Using filesort \\
-		优化后 & range & idx\_wh\_work\_date & Using index condition; Using temporary; Using filesort \\
-		\bottomrule
-	\end{tabular}
+	{\songti\seuwuhao\selectfont
+		\begin{tabular}{lllll}
+			\toprule
+			版本 & type & key & Extra \\
+			\midrule
+			优化前 & ALL & NULL & Using where; Using temporary; Using filesort \\
+			优化后 & range & idx\_wh\_work\_date & Using index condition; Using temporary; Using filesort \\
+			\bottomrule
+		\end{tabular}
+	}
 	\label{tab:sql-exec-plan}
 \end{table}
 
