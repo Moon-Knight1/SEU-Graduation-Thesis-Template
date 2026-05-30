@@ -2066,7 +2066,7 @@
   subsection = {
     beforeskip = 4pt,
     afterskip = 3pt,
-    format = \seuboldsongti\seuxiaosi
+    format = \songti\normalfont\seuxiaosi
   }
 }
 

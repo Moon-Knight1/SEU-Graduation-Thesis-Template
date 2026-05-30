@@ -453,10 +453,14 @@ ai_scope = {1}
 
 ## Git管理
 
-```
+```git
 git config http.proxy http://127.0.0.1:7897
 git config https.proxy https://127.0.0.1:7897
+```
 
+
+
+```git
 git add .
 git commit -m "提交描述"
 git push origin main
@@ -469,5 +473,3 @@ set HTTP_PROXY=http://127.0.0.1:7897
 set HTTPS_PROXY=http://127.0.0.1:7897
 claude update
 ```
-
-

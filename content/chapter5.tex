@@ -2,14 +2,14 @@
 上一个章节从整体架构、功能模块等层面对系统进行了宏观设计，明确了各模块的职责。在此基础上，本章将对系统的核心模块展开详细设计，将概要设计转化为可落地代码方案。本章从系统的各个模块和几个关键点设计出发，结合类图与时序图来解释类之间的关系以及核心方法的业务逻辑，为后续的系统实现与测试提供关键性的保障。
 
 \section{模块设计}
-这个系统所有模块在工程上都采用了标准的Controller、Service、Mapper三层架构。Controller层定义接口的请求方式、请求路径以及请求参数等，负责接收请求，调用 Service 处理业务逻辑；Service层处理核心业务逻辑和事务，以及调用Mapper或外部服务；Mapper层与数据库进行交互，对于一些复杂的多表操作，由于 Mybatis-plus 只是提供了一些简单的单表操作，因此我们需要在xml文件中编写相应的SQL语句。对于数据查询操作，封装了查询请求基类 QueryRequest ，便于其他模块复用统一的分页（页号，页大小）与排序规则（排序字段、升序开关）属性，各个模块可以根据需求继承该类来扩展特定的业务查询维度。控制层在收到业务层的返回结果后，统一由 FebsResponse 包装后响应给前端。
+这个系统所有模块在工程上都采用了标准的Controller、Service、Mapper三层架构。Controller层定义接口的请求方式、请求路径以及请求参数等，负责接收请求，调用 Service 处理业务逻辑；Service层处理核心业务逻辑和事务，以及调用Mapper或外部服务；Mapper层与数据库进行交互，对于一些复杂的多表操作，由于 Mybatis-plus 只是提供了一些简单的单表操作，因此我们需要在 XML 文件中编写相应的SQL语句。对于数据查询操作，封装了查询请求基类 QueryRequest ，便于其他模块复用统一的分页（页号，页大小）与排序规则（排序字段、升序开关）属性，各个模块可以根据需求继承该类来扩展特定的业务查询维度。控制层在收到业务层的返回结果后，统一由 FebsResponse 包装后响应给前端。
 
-\subsection{部门投入BU工时分布}
-部门当月投入到各BU（业务单元）的工时分布，是企业管理人力资源调配的重要可视化视图。当前界面默认加载当月的公司整体BU工时饼图，用户也可通过年份加月份进行历史数据查询。该模块还可展示某BU的工时详情，包括总工时、平均工时、工时占比、加班工时及工时趋势等关键指标。这些指标数据为项目成本核算与业务决策提供客观的数据支撑。
+\subsection{部门投入 BU 工时分布}
+部门当月投入到各 BU 的工时分布，是企业管理人力资源调配的重要可视化视图。当前界面默认加载当月的公司整体 BU 工时饼图，用户也可通过年份加月份进行历史数据查询。该模块还可展示某 BU 的工时详情，包括总工时、平均工时、工时占比、加班工时及工时趋势等关键指标。这些指标数据为项目成本核算与业务决策提供客观的数据支撑。
 
 （1）类图设计
 
-WorkHourController 作为工时管理模块的控制层类，主要负责接收前端发送的工时统计请求，并将请求参数传递给业务层进行处理。WorkHourService 是工时管理模块的业务接口，用于定义工时统计相关的业务方法，保证控制层与具体业务实现之间保持松耦合。WorkHourServiceImpl 是该接口的实现类，负责完成工时数据查询、组织信息处理、项目数据关联以及缓存读写等核心业务逻辑。WorkHourQueryDTO 用于封装前端传入的查询条件，包括年份、月份、组织节点和 BU 名称等参数，从而避免接口参数过于分散。FebsResponse 用于统一封装接口响应结果，保证前后端数据交互格式的一致性。Mapper 相关接口则主要负责数据库访问，其中 WorkHourMapper 用于查询工时数据，OrgMapper 用于获取组织结构信息，TbEmpBaseinfoMapper 用于查询员工信息，ProjectMapper 用于获取项目相关数据。
+WorkHourController 作为工时管理模块的控制层类，主要负责接收前端发送的工时统计请求，并将请求参数传递给业务层进行处理。WorkHourService 是工时管理模块的业务接口，用于定义工时统计相关的业务方法，保证控制层与具体业务实现之间保持松耦合。WorkHourServiceImpl 是该接口的实现类，负责完成工时数据查询、组织信息处理、项目数据关联以及缓存读写等核心业务逻辑。WorkHourQueryDTO 用于封装前端传入的查询条件，包括年份、月份、组织节点和 BU 名称等参数，避免接口参数过于分散。FebsResponse 用于统一封装接口响应结果，保证前后端数据交互格式的一致性。Mapper 相关接口则主要负责数据库访问，其中 WorkHourMapper 用于查询工时数据，OrgMapper 用于获取组织结构信息，EmpBaseinfoMapper 用于查询员工信息，ProjectBaseinfoMapper 用于获取项目相关数据。
 
 \begin{figure}[htbp]
 	\centering
@@ -18,13 +18,11 @@ WorkHourController 作为工时管理模块的控制层类，主要负责接收�
 	\label{fig:class-bu-hour}
 \end{figure}
 
-由图~\ref{fig:class-bu-hour} 可知，WorkHourController 与 WorkHourService 之间存在依赖关系，控制层并不直接处理具体业务逻辑，而是通过调用业务接口完成工时统计请求的转发与结果返回。WorkHourServiceImpl 实现了 WorkHourService 接口，具体负责 getWorkhourGroupByBu 和 getBuDetail 等业务方法的实现，这种面向接口的设计方式有利于降低模块之间的耦合度，也便于后续对业务逻辑进行扩展和维护。
+由图~\ref{fig:class-bu-hour} 可知，WorkHourController 与 WorkHourService 之间存在依赖关系，控制层并不直接处理具体业务逻辑，而是通过调用业务接口完成工时统计请求的转发与结果返回。WorkHourServiceImpl 实现了 WorkHourService 接口，具体负责 getWorkhourGroupByBu 和 getBuDetail 等业务方法的实现，这种面向接口的设计方式有利于降低模块之间的耦合度。
 
-%在该类图中，WorkHourController通过 @RestController 标识为 REST 风格的控制器,之后再用@RequestMapping分别定义各个接口的请求方法和路径,接收前端传入的年份、月份、组织节点及 BU 名称等检索条件，为了避免接口参数的散乱以及提高代码的可读性与扩展性，将其统一封装为 WorkHourQueryDTO 数据传输对象。业务层先通过service接口定义规范，模块的核心业务在实现类WorkHourServiceImpl中进行重写，该服务类中通过注解 @Autowired 注入了多个数据访问层对象：包括用于递归获取组织树的 OrgMapper、查询员工基础信息的 TbEmpBaseinfoMapper、获取项目信息的 PrjlistMapper，以及负责核心工时考勤数据的 WorkHourMapper。同时，考虑到工时报表数据具有典型的“读多写少”特性，业务层引入了 redisTemplate 组件来对redis缓存进行读写操作。
+（2）BU 工时分布统计
 
-（2）BU工时分布统计
-
-BU工时分布统计用于展示指定年月、指定组织范围内各 BU 的工时占比情况，其核心业务流转如图\ref{fig:seq-bu-hour-distribution}所示。
+BU 工时分布统计用于展示指定年月、指定组织范围内各 BU 的工时占比情况，其核心业务流转如图\ref{fig:seq-bu-hour-distribution}所示。
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.8\linewidth]{imgs/Seq/BU工时饼图时序图.png}
@@ -34,9 +32,7 @@ BU工时分布统计用于展示指定年月、指定组织范围内各 BU 的�
 
 用户在前端页面中选择查询年月和组织节点后，点击查询按钮发起统计请求。前端将查询条件提交至后端请求处理层，后端首先对年月、组织节点等参数进行合法性校验。校验通过后，业务层根据组织节点获取其下属组织范围，之后查询这些组织下的员工列表。随后，系统结合查询时间参数和员工 UID 列表，从工时数据表中按 BU 维度进行分组聚合，计算各 BU 的工时分布结果。最终，后端将统计结果封装后返回前端，前端通过 ECharts 饼图组件完成可视化展示。
 
-%用户在前端的下拉框中选择查询的年月和组织节点后，点击查询按钮发起请求。后端请求处理层接收到请求后，首先对参数进行非空和有效性校验，校验通过后进入业务层，首先查询Redis中是否存在对应的图表缓存数据，若命中则直接返回，以此降低到达数据库的请求数量。若缓存未命中，系统首先调用 OrgMapper 递归获取目标组织及其所有子节点的 ID 集合，随后通过 EmployeeMapper 查询出这些节点下所有员工的 UID 列表。同时，针对前端传递的年月参数，考虑到数据库工时表记录的日期精确到天，为避免在 SQL 语句中使用日期格式化函数（如 DATE\_FORMAT）匹配从而引发索引失效问题，业务层会预先将年月参数转换为该月的起止时间范围（即月初第一天至月末最后一天）。接着，将时间参数和 UID 列表传入 WorkHourMapper，调用接口对数据库执行分组聚合查询，计算出各个BU的工时分布情况。最后，系统将该计算结果写入 Redis 并设置过期时间，过期策略是当月数据一小时，其余时间24小时，将数据封装后返回给前端，利用Echarts组件来渲染分布饼图。
-
-（3）BU工时详情查询
+（3）BU 工时详情查询
 
 当用户需要进一步查看某个 BU 的工时详情，可以点击饼图中对应位置，即可弹框展示详情，其业务逻辑如图\ref{fig:seq-bu-hour-detail}所示。
 \begin{figure}[htbp]
@@ -46,9 +42,7 @@ BU工时分布统计用于展示指定年月、指定组织范围内各 BU 的�
 	\label{fig:seq-bu-hour-detail}
 \end{figure}
 
-前端根据用户点击的 BU 信息发起详情查询请求。后端接收到请求后，对 BU 标识和查询时间等参数进行校验。校验通过后，业务层首先去项目表里查询出归属与这个 BU 的项目 ID 列表，并基于项目和时间范围进一步查询加班工时、以及近六个月的工时变化趋势。查询完成后，系统将基础信息、工时汇总结果和趋势数据统一封装返回前端，由前端弹窗展示基础信息面板和工时趋势折线图。
-
-%前端会发起对该 BU 的详情查询请求。后端同样优先进行缓存校验。若缓存未命中，系统首先通过 ProjectMapper 查询出该 BU 下挂载的所有项目 ID 列表。随后，依据项目 ID 调用 WorkHourMapper 查询这些项目的加班工时数和近六个月的工时变化趋势。在将详情数据回写至 Redis时，系统对过期时间进行了抖动处理，以防止大量缓存同时失效引发缓存雪崩问题。数据返回前端后，渲染生成具体的基础信息面板与工时趋势折线图。
+前端根据用户点击的 BU 信息发起详情查询请求。后端接收到请求后，对 BU 标识和查询时间等参数进行校验。校验通过后，业务层首先去项目表里查询出归属于这个 BU 的项目 ID 列表，并基于项目和时间范围进一步查询加班工时、以及近六个月的工时变化趋势。查询完成后，系统将基础信息、工时汇总结果和趋势数据统一封装返回前端，由前端弹窗展示基础信息面板和工时趋势折线图。
 
 （4）查询性能优化
 
@@ -61,9 +55,9 @@ BU工时分布统计用于展示指定年月、指定组织范围内各 BU 的�
 \subsection{项目基本信息管理}
 项目基本信息管理模块主要围绕项目基础数据的查询、维护、导出和交付历史记录查询展开，其核心类包括控制层类、业务接口类、业务实现类、数据访问类、查询参数类。
 
-其中，TbProjectBaseinfoController 是项目基本信息模块的控制层类，主要负责接收前端请求，并根据不同接口调用对应的业务方法。该类中包含分页查询、新增项目、修改项目、导出项目信息以及查询历史记录等方法，是前端访问该模块功能的入口。ITbProjectBaseinfoService 是业务层接口，用于定义项目基本信息相关的业务操作，包括项目信息分页查询、项目创建、项目更新和历史记录查询等。TbProjectBaseinfoServiceImpl 是业务接口的实现类，负责完成具体的业务处理逻辑，并通过数据访问层获取或保存相关数据。
+其中，ProjectBaseinfoController 是项目基本信息模块的控制层类，主要负责接收前端请求，并根据不同接口调用对应的业务方法。该类中包含分页查询、新增项目、修改项目、导出项目信息以及查询历史记录等方法，是前端访问该模块功能的入口。IProjectBaseinfoService 是业务层接口，用于定义项目基本信息相关的业务操作，包括项目信息分页查询、项目创建、项目更新和历史记录查询等。ProjectBaseinfoServiceImpl 是业务接口的实现类，负责完成具体的业务处理逻辑，并通过数据访问层获取或保存相关数据。
 
-在数据访问层中，TbProjectBaseinfoMapper 主要用于操作项目基本信息表，完成项目信息的查询、新增和修改等数据库操作；TbProjectBaseinfoHistoryMapper 主要用于操作项目历史记录相关数据，为项目变更记录查询提供数据支持。ProjectQueryRequest 是项目查询请求对象，用于封装前端传入的查询条件，如 BU 名称和项目名称等。由于项目列表查询通常需要分页和排序功能，因此 ProjectQueryRequest 继承了 QueryRequest。
+在数据访问层中，ProjectBaseinfoMapper 主要用于操作项目基本信息表，完成项目信息的查询、新增和修改等数据库操作；ProjectBaseinfoHistoryMapper 主要用于操作项目历史记录相关数据，为项目变更记录查询提供数据支持。ProjectQueryRequest 是项目查询请求对象，用于封装前端传入的查询条件，如 BU 名称和项目名称等。由于项目列表查询通常需要分页和排序功能，因此 ProjectQueryRequest 继承了 QueryRequest。
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.8\linewidth]{imgs/class/项目基本信息管理类图.png}
@@ -71,7 +65,7 @@ BU工时分布统计用于展示指定年月、指定组织范围内各 BU 的�
 	\label{fig:class-project-baseinfo}
 \end{figure}
 
-由图~\ref{fig:class-project-baseinfo} 可知，TbProjectBaseinfoController 依赖 ITbProjectBaseinfoService 完成业务调用，避免控制层直接处理数据库操作。ITbProjectBaseinfoService 由 TbProjectBaseinfoServiceImpl 实现，具体的项目信息处理逻辑集中在实现类中完成。TbProjectBaseinfoServiceImpl 进一步调用 TbProjectBaseinfoMapper 和 TbProjectBaseinfoHistoryMapper 获取项目基础数据及历史记录数据。由于项目列表查询通常需要分页和排序功能，因此 ProjectQueryRequest 继承 QueryRequest。
+由图~\ref{fig:class-project-baseinfo} 可知，ProjectBaseinfoController 依赖 IProjectBaseinfoService 完成业务调用，避免控制层直接处理数据库操作。IProjectBaseinfoService 由 ProjectBaseinfoServiceImpl 实现，具体的项目信息处理逻辑集中在实现类中完成。ProjectBaseinfoServiceImpl 进一步调用 ProjectBaseinfoMapper 和 ProjectBaseinfoHistoryMapper 获取项目基础数据及历史记录数据。
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.8\linewidth]{imgs/Seq/项目信息管理时序图.png}
@@ -79,10 +73,10 @@ BU工时分布统计用于展示指定年月、指定组织范围内各 BU 的�
 	\label{fig:seq-project-baseinfo}
 \end{figure}
 
-针对项目基本信息的“新增与更新”流程，系统在后端实现上重点保障了数据的安全性与可追溯性，其核心业务流转如图~\ref{fig:seq-project-baseinfo}所示。我们在 TbProjectBaseinfoController 的新增和更新方法上加上了 @RequiresPermissions 注解，前端发起的 HTTP 请求会先经过请求处理层的 JWT 校验，通过后 Shiro 框架会拦截加了注解的方法，在方法执行前先查询预热到缓存的权限数据，如果没有就去数据库查询，检查当前用户是否有对应权限，并利用 \texttt{@Valid} 完成参数的合法性校验。进入业务层后，系统采用“主表+历史表”的双写策略：首先将最新的项目信息更新至MySQL主表；随后，通过构建当前操作的完整数据快照（涵盖新旧值、操作人及操作类型），并写入项目信息快照表。这种快照机制便于后续的项目审计与数据回滚操作。由于部分字段比如"近期交付阀点"和"近期阀点日期"修改比较频繁，可能导致快照表的体积变得太大，因此针对这部分的修改历史保存到交付历史变更表中。由于更新操作修改了多张表，需要在业务层的方法上加上 @Transactional 注解，将多表更新操作限制在单一事务中，以确保原子性和一致性。需要注意的是，在实际开发中，并不是在方法上加注解就可以高枕无忧了，事务包裹的范围应该尽可能小，否则可能会导致长事务的出现，很容易耗尽连接池导致数据库崩溃，同时长期持有的锁会引发大范围阻塞，并因阻碍日志清理而拖垮数据库性能。此外还要考虑注解失效的情景，避免在开发中犯这类错误。
+针对项目基本信息的“新增与更新”流程，系统在后端实现上重点保障了数据的安全性与可追溯性，其核心业务流转如图~\ref{fig:seq-project-baseinfo}所示。我们在 ProjectBaseinfoController 的新增和更新方法上加上了 @RequiresPermissions 注解，前端发起的 HTTP 请求会先经过请求处理层的 JWT 校验，通过后 Shiro 框架会拦截加了注解的方法，在方法执行前先查询预热到缓存的权限数据，如果没有就去数据库查询，检查当前用户是否有对应权限，并利用 \texttt{@Valid} 完成参数的合法性校验。进入业务层后，系统采用“主表+历史表”的双写策略：首先将最新的项目信息更新至MySQL主表；随后，通过构建当前操作的完整数据快照（涵盖新旧值、操作人及操作类型），并写入项目信息快照表。这种快照机制便于后续的项目审计与数据回滚操作。由于部分字段比如"近期交付阀点"和"近期阀点日期"修改比较频繁，可能导致快照表的体积变得太大，因此针对这部分的修改历史保存到交付历史变更表中。由于更新操作修改了多张表，需要在业务层的方法上加上 @Transactional 注解，将多表更新操作限制在单一事务中，以确保原子性和一致性。需要注意的是，在实际开发中，并不是在方法上加注解就可以高枕无忧了，事务包裹的范围应该尽可能小，否则可能会导致长事务的出现，很容易耗尽连接池导致数据库崩溃，同时长期持有的锁会引发大范围阻塞，并因阻碍日志清理而拖垮数据库性能。此外还要考虑注解失效的情景，避免在开发中犯这类错误。
 
 \subsection{缺陷管理}
-在企业实际研发过程中，项目缺陷数据来源较为分散，企业内部同时使用了 Trinity、Jira 以及 BugClose 这三个缺陷管理平台。其中，Trinity 为企业内部平台，另外两个是主流的缺陷管理工具。三个平台在使用过程中都会产生缺陷相关数据，如缺陷编号、缺陷标题、所属项目、缺陷状态、严重程度、责任人、创建时间、关闭时间等，这些数据共同反映了缺陷从发现到解决的处理过程。但是各平台的字段设计也存在一些差异，在系统中会用三张表格进行存储，以保留各平台原有字段及业务含义。缺陷管理模块需要对这些缺陷表进行统一管理，聚合统计出缺陷的解决比率。通过数据汇聚与指标计算，为项目质量人员提供多维度的缺陷质量看板。
+在企业实际研发过程中，项目缺陷数据来源较为分散，企业内部同时使用了 Trinity、Jira 以及 BugClose 这三个缺陷管理平台。其中，Trinity 为企业内部平台，另外两个是主流的缺陷管理工具。三个平台在使用过程中都会产生缺陷相关数据，这些数据的字段主要包括缺陷编号、缺陷标题、所属项目、缺陷状态、严重程度、责任人、创建时间、关闭时间等，共同反映了缺陷从发现到解决的处理过程。然而，各平台的导出的数据字段存在差异，比如 Jira 中缺陷状态可以是 To Do / In Progress / Resolved / Closed / Done / Reopened，在 BugClose 可能是新建 / 打开 / 修复中 / 已解决 / 已关闭 / 重新打开。如果只用一张表不方便管理，因此系统使用三张表进行存储，以保留各平台原有字段及业务含义。缺陷管理模块需要提供对这些缺陷表单独的分页查询，以及聚合统计出缺陷的解决比率，为项目质量人员提供项目健康度看板。
 
 BugController 作为控制层，负责接收前端请求，并调用对应的业务接口完成缺陷相关操作。BugService 用于定义缺陷管理的主要业务方法，BugServiceImpl 负责具体业务逻辑的实现。ProjectClusterService 主要用于提供项目聚类相关的数据支持，在缺陷统计和聚类展示中起到辅助作用。数据访问层中，BugMapper 负责缺陷数据的查询与维护，OrgMapper 用于获取组织相关信息。BugQueryRequest 用于封装缺陷查询条件，并继承 QueryRequest 中的通用查询参数；FebsResponse 用于统一封装接口返回结果。
 
@@ -110,9 +104,15 @@ BugController 作为控制层，负责接收前端请求，并调用对应的业
 
 （2）缺陷查询深分页优化
 
-系统前端提供了对三类缺陷数据表的分页查询功能。由于缺陷表数据量较大，当用户查询较靠后的页码时，普通分页方式的查询效率会明显下降。其原因在于，对于 LIMIT offset, N 语句，数据库需要先扫描 offset + N 条记录，再丢弃前 offset 条数据，最终返回当前页所需的 N 条记录。当偏移量较大时，会产生大量无效扫描；如果查询字段较多，还可能带来较多回表操作，从而影响接口响应速度\cite{botros2021highperformance}。
+系统前端提供了对三类缺陷数据表的分页查询功能。由于缺陷表数据量较大，当用户查询较靠后的页码时，普通分页方式的查询效率会明显下降。其原因在于，对于 LIMIT offset, N 语句，数据库需要先扫描 offset*N + N 条记录，再丢弃前 offset*N 条数据，最终返回当前页所需的 N 条记录。当偏移量较大时，会产生大量无效扫描；如果查询字段较多，还可能带来较多回表操作，从而影响接口响应速度\cite{botros2021highperformance}。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.65\linewidth]{imgs/Seq/缺陷查询深分页时序图.png}
+	\caption{缺陷分页查询时序图}
+	\label{fig:seq-bug-pagequery}
+\end{figure}
 
-针对上述问题，系统在深分页查询中采用延迟关联的优化思路。该方式先在子查询中根据筛选条件和排序字段查询当前页对应的主键，再通过主键关联原表获取完整缺陷信息。相比直接查询全部字段，延迟关联可以减少大量无效数据的回表操作，从而提升大数据量分页查询场景下的查询效率。普通分页查询与延迟关联分页查询的 SQL 对比如图 \ref{fig:sql-optimization-compare} 所示。
+针对上述问题，系统在深分页查询中采用延迟关联的优化思路，如图\ref{fig:seq-bug-pagequery}所示。该方式先在子查询中根据筛选条件和排序字段查询当前页对应的主键，再通过主键关联原表获取完整缺陷信息。相比直接查询全部字段，该方法可以减少大量无效数据的回表操作，从而提升大数据量分页查询场景下的查询效率。普通分页查询与延迟关联分页查询的 SQL 对比如图 \ref{fig:sql-optimization-compare} 所示。
 \begin{figure}[htbp]
 \centering
 \noindent % 消除首行缩进，确保左侧完全对齐
@@ -153,7 +153,7 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 	\label{fig:serious-problem-process}
 \end{figure}
 
-重大问题管理功能围绕 TbProjectSeriousProblem 业务对象展开，主要实现重大问题的分页查询、新增修改、数据导出以及飞书提醒等操作。控制层 TbProjectSeriousProblemController 负责接收前端请求，并将具体业务处理交给服务层完成；服务层 TbProjectSeriousProblemServiceImpl 负责重大问题数据的查询处理、人员信息补全以及提醒消息组织；数据访问层 TbProjectSeriousProblemMapper 负责完成重大问题数据的数据库查询。除此之外，TbProjectSeriousProblemQueryRequest 用于封装前端传入的查询条件，使接口参数更加清晰。
+重大问题管理功能围绕 ProjectSeriousProblem 业务对象展开，主要实现重大问题的分页查询、新增修改、数据导出以及飞书提醒等操作。控制层 ProjectSeriousProblemController 负责接收前端请求，并将具体业务处理交给服务层完成；服务层 ProjectSeriousProblemServiceImpl 负责重大问题数据的查询处理、人员信息补全以及提醒消息组织；数据访问层 ProjectSeriousProblemMapper 负责完成重大问题数据的数据库查询。除此之外，ProjectSeriousProblemQueryRequest 用于封装前端传入的查询条件，使接口参数更加清晰。
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.8\linewidth]{imgs/class/重大问题管理类图.png}
@@ -161,7 +161,7 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 	\label{fig:class-serious-problem}
 \end{figure}
 
-重大问题管理类图如图~\ref{fig:class-serious-problem}所示。从类之间的关系来看，控制层依赖 ITbProjectSeriousProblemService 完成核心业务操作。TbProjectSeriousProblemServiceImpl 作为业务接口的实现类，通过 TbProjectSeriousProblemMapper 查询重大问题数据，调用项目、员工和组织相关服务接口查询飞书消息接收人列表，然后调用飞书服务的 sendTemplateCard() 方法完成消息卡片的发送。
+重大问题管理类图如图~\ref{fig:class-serious-problem}所示。从类之间的关系来看，控制层依赖 IProjectSeriousProblemService 完成核心业务操作。ProjectSeriousProblemServiceImpl 作为业务接口的实现类，通过 ProjectSeriousProblemMapper 查询重大问题数据，调用项目、员工和组织相关服务接口查询飞书消息接收人列表，然后调用 IFeishuService 的 sendTemplateCard() 方法完成消息卡片的发送。
 
 重大问题管理的核心业务流程如图\ref{fig:seq-serious-problem}所示。用户进入列表页面后，系统首先根据当前登录用户的身份判断其权限，查询并展示其可见的问题记录。用户可通过顶部筛选栏按多维度条件进行检索，也可点击"新增"按钮创建新的重大问题。
 \begin{figure}[!htbp]
@@ -174,33 +174,34 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 在问题登记阶段，用户填写重大问题的基础信息和首问责任人。系统保存记录后，根据问题涉及的责任人生成通知内容，并通过飞书消息推送给相关人员，使问题能够及时进入处理环节。在问题处理阶段，由责任人来填写问题的技术原因和解决方案；当问题需要更高层级协调时，可将问题标记为“需要上升”，并指定上升责任人，由其介入协调资源后继续推进问题处理。当问题需要关闭时，用户需要补充实际解决日期、最终责任人、责任分类、技术原因、技术解决方案等信息。系统根据计划解决日期和实际解决日期自动判断问题状态：实际解决日期不晚于计划解决日期时，问题状态为按时关闭；实际解决日期晚于计划解决日期时，问题状态为超期关闭；若超过计划解决日期仍未填写实际解决日期，则问题保持超期未关闭状态。通过该设计，模块能够对重大问题从发现、处理、上升到关闭的全过程进行记录和约束。
 
 \section{数据库设计}
-为说明系统中各业务数据对象之间的关系，本文首先给出数据库的总体逻辑 ER 图，如图 \ref{fig:er-overall} 所示。该图从业务对象角度抽象出组织、员工、项目、缺陷、重大问题、项目聚类和聚类缺陷快照等核心实体，并描述各实体之间的主要关联关系。后续小节将在此基础上分别说明关键数据表的字段设计。
+本节从概念设计和数据表设计两个层面展开：首先通过 E-R 图描述系统核心业务实体及其关系，明确数据模型的整体结构；随后对主要业务表的关键字段设计进行详细说明。
+\subsection{概念设计}
 
-\subsection{逻辑结构设计}
-\begin{figure}[htbp]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.8\linewidth]{imgs/ER/er-diagram-without.png}
 	\caption{数据库E-R图}
 	\label{fig:er-overall}
 \end{figure}
-系统数据库以项目为主要业务对象进行组织。项目在系统中既是缺陷统计、工时记录和重大问题管理的归属对象，也是项目聚类分析的基础单元。因此，在总体 ER 图中，项目实体位于业务数据关系的中心位置，并分别与缺陷、重大问题、工时记录、项目交付历史和项目聚类等实体建立联系。
+
+由图\ref{fig:er-overall}可知，系统数据库以项目为主要业务对象进行组织。项目在系统中既是缺陷统计、工时记录和重大问题管理的关联对象。因此，在总体 ER 图中，项目实体位于业务数据关系的中心位置，并分别与缺陷、重大问题、工时记录、项目交付历史和项目聚类等实体建立联系。
 
 组织和员工实体用于描述系统中的人员基础数据。组织实体记录组织编号、组织编码以及上级组织编号，用于表示企业内部的层级结构；员工实体记录员工编号、员工 UID 以及所属组织。员工与组织之间是一对多关系，即一个组织下可以包含多名员工，而每名员工归属于一个组织。
 
-项目实体记录项目状态、项目所属 BU、南京项目经理、当前里程碑、近期交付阀点及阀点日期等信息。项目与员工之间通过项目经理的id建立关联，一个项目经理可以负责多个项目。项目交付历史实体用于记录项目近期交付的变更情况。该实体与项目实体之间是一对多关系，表示同一项目在执行过程中可能产生多次交付节点调整记录。
+项目实体记录项目状态、项目所属 BU、南京项目经理、当前里程碑、近期交付内容及交付日期等信息。项目与员工之间通过项目经理的id建立关联，一个项目经理可以负责多个项目。项目交付历史用于记录项目近期交付的变更情况，该实体与项目实体之间是一对多关系，表示同一项目在执行过程中可能产生多次交付节点调整记录。
 
-缺陷实体用于保存项目缺陷的主要信息。缺陷与项目之间是一对多关系，一个项目可以对应多条缺陷记录；缺陷与员工之间通过责任人建立关联，用于定位缺陷处理人员。
+缺陷实体用于保存项目缺陷的主要信息。一个项目可以对应多条缺陷记录；缺陷与员工之间通过责任人建立关联，用于定位缺陷处理人员。
 
 重大问题实体用于记录项目执行过程中需要重点跟踪的问题。重大问题与项目之间是一对多关系，即一个项目可以产生多条重大问题记录。
 
-项目聚类是指将多个相关项目归为一组，以组为单位进行缺陷统计。系统通过聚类名称将若干项目归为同一统计对象，并为聚类配置负责人。项目聚类与项目之间形成一对多关系，一个聚类可以包含多个项目；项目聚类与员工之间通过负责人建立关联，用于表示该聚类统计对象的管理责任人。聚类 Bug 快照与项目聚类之间是一对多关系，同一聚类可以按日期保存多条快照记录，从而支持缺陷趋势分析。
+项目聚类是指将多个相关项目归为一组，以组为单位进行缺陷统计。系统通过聚类名称将若干项目归为同一统计对象，并为聚类配置负责人。项目聚类与项目之间形成一对多关系；项目聚类与员工之间通过负责人建立关联，用于表示该聚类统计对象的管理责任人。聚类 Bug 快照与项目聚类之间是一对多关系，同一聚类可以按日期保存多条快照记录，从而支持缺陷趋势分析。
 
-总体来看，该数据库模型以项目为中心，将人员组织、缺陷数据、重大问题、工时记录、交付历史和聚类统计数据连接起来。组织和员工实体提供人员归属关系，项目实体承载项目基础信息，缺陷和重大问题实体记录项目执行过程中的质量问题，项目聚类和聚类 Bug 快照实体则面向跨项目统计分析。由于部分业务数据来源于外部同步表，实际物理表中并非所有关系都采用数据库外键约束，图中的关系主要用于描述系统业务对象之间的逻辑关联。
+总体来看，该数据库模型以项目为中心，将人员组织、缺陷数据、重大问题、工时记录、交付历史和聚类统计数据连接起来。出于性能考虑，实际开发中只维护实体之间的逻辑关系，而不在表中设置数据库外键约束。
 
 \subsection{数据表设计}
-在数据库总体设计的基础上，本节进一步说明系统主要业务表的结构设计。
+在数据库总体设计的基础上，本节进一步说明系统主要业务表的关键字段设计。
 \begin{enumerate}[label=(\arabic*)]	
-	\item BU工时统计主要用于分析各个组织部门在业务单元的工时投入情况，涉及的实体包括组织树（\texttt{tb\_org\_tree}）、员工基础信息（\texttt{tb\_emp\_baseinfo}）、项目列表（\texttt{tb\_project\_\allowbreak baseinfo\_\allowbreak new}）和工时记录（\texttt{tb\_sync\_wh}），其关系如图\ref{fig:er-org-wh}所示。
+	\item 部门投入 BU 工时分布主要用于分析各个组织部门在业务单元的工时投入情况，涉及的实体包括组织树（\texttt{tb\_org\_tree}）、员工基础信息（\texttt{tb\_emp\_baseinfo}）、项目列表（\texttt{tb\_project\_\allowbreak baseinfo\_\allowbreak new}）和工时记录（\texttt{tb\_sync\_wh}），其关系如图\ref{fig:er-org-wh}所示。
 	\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=0.8\linewidth]{imgs/ER/工时.png}
@@ -211,7 +212,7 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 	\verb|tb_org_tree| 用于保存组织树结构，通过 \verb|parent_id| 与 \verb|org_id| 的自关联关系表示企业内部组织层级。\verb|tb_emp_baseinfo| 用于保存员工基础信息，其中 \verb|org_id| 表示员工所属组织，\verb|uid_code| 是员工在系统中的唯一标识。工时记录表 \verb|tb_sync_wh| 存储从 Trinity 系统同步而来的员工填报工时数据，通过 \verb|uid| 与员工表中的 \verb|uid_code| 建立逻辑关联，通过 \verb|project_id| 与项目基础信息表中的项目建立逻辑关联。
 	
 	\item 
-	项目基础信息主要用于保存项目的主数据及其变更记录，为项目查询、工时统计、缺陷分析和重大问题管理提供统一的项目维度。该部分涉及的实体包括员工基础信息（\texttt{tb\_emp\_baseinfo}）、项目基础信息（\texttt{tb\_project\_\allowbreak baseinfo\_\allowbreak new}）、项目基础信息历史记录（\texttt{tb\_project\_\allowbreak baseinfo\_\allowbreak new\_\allowbreak his}）和项目交付阀点历史记录（\texttt{tb\_project\_\allowbreak delivery\_\allowbreak history}），其关系如图\ref{fig:er-project-base}所示。
+	项目基础信息管理主要负责保存项目的主数据及其变更记录，为项目查询、工时统计、缺陷分析和重大问题管理提供统一的项目维度。该部分涉及的实体包括员工基础信息（\texttt{tb\_emp\_baseinfo}）、项目基础信息（\texttt{tb\_project\_\allowbreak baseinfo\_\allowbreak new}）、项目基础信息历史记录（\texttt{tb\_project\_\allowbreak baseinfo\_\allowbreak new\_\allowbreak his}）和项目交付阀点历史记录（\texttt{tb\_project\_\allowbreak delivery\_\allowbreak history}），其关系如图\ref{fig:er-project-base}所示。
 	\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=0.8\linewidth]{imgs/ER/项目.png}
@@ -219,11 +220,11 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 		\label{fig:er-project-base}
 	\end{figure}
 	
-	\verb|tb_project_baseinfo_new| 用于保存项目当前基础信息，包括项目编号、项目状态、所属 BU、客户名称、南京项目经理、当前里程碑、近期交付阀点和阀点日期等字段。其中，\verb|project_id| 是项目的唯一标识，\verb|nj_pm_id| 用于关联员工基础信息表中的项目经理。项目基础信息历史表 \verb|tb_project_baseinfo_new_his| 用于保存项目基础信息的变更记录，记录项目状态、所属 BU、里程碑计划时间、提交人和提交时间等信息。项目交付阀点历史表 \verb|tb_project_delivery_history| 用于保存近期交付阀点的调整记录，通过 \verb|project_id| 与项目基础信息表建立逻辑关联，从而保留项目交付计划的变更过程。
+	\verb|tb_project_baseinfo_new| 用于保存项目最新的基本信息，包括项目编号、项目状态、所属 BU、客户名称、南京项目经理、当前里程碑、近期交付阀点和阀点日期等字段。其中，\verb|project_id| 是项目的唯一标识，\verb|nj_pm_id| 用于关联员工基础信息表中的项目经理。项目基础信息历史表 \verb|tb_project_baseinfo_new_his| 用于保存项目基础信息的变更记录，记录项目状态、所属 BU、里程碑计划时间、提交人和提交时间等信息。项目交付阀点历史表 \verb|tb_project_delivery_history| 用于保存近期交付阀点的调整记录，通过 \verb|project_id| 与项目基础信息表建立逻辑关联，从而保留项目交付计划的变更过程。
 	
 	
 	\item 
-	项目聚类缺陷统计主要用于对多个项目的缺陷数据进行汇总分析，支撑聚类维度的质量看板展示。
+	缺陷管理主要用于对缺陷数据进行汇总分析，提供健康度展示的质量看板。
 	\begin{figure}[htbp]
 		\centering
 		\includegraphics[width=0.8\linewidth]{imgs/ER/项目聚类Bug.png}
@@ -233,7 +234,7 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 	
 	该部分涉及的实体包括项目基础信息（\texttt{tb\_project\_\allowbreak baseinfo\_\allowbreak new}）、Trinity 缺陷同步表（\texttt{tb\_sync\_bug}）、Jira 问题同步表（\texttt{tb\_sync\_jira}）、BugClose 缺陷同步表（\texttt{tb\_sync\_\allowbreak bugclose}）、项目聚类映射表（\texttt{tb\_project\_\allowbreak cluster}）和聚类缺陷统计快照表（\texttt{tb\_bug\_\allowbreak cluster\_\allowbreak daily\_\allowbreak snapshot}），其关系如图\ref{fig:er-bug-cluster}所示。
 	
-	\verb|tb_sync_bug|、\verb|tb_sync_jira| 和 \verb|tb_sync_bugclose| 分别保存来自不同缺陷系统的同步数据，主要字段包括缺陷编号、项目编号、缺陷状态、严重度、责任人、修复人、创建时间、修复时间和关闭时间等。由于三类缺陷数据来源不同，字段命名和状态取值存在差异，系统在统计时根据项目编号或项目名称进行匹配，并在业务层统一计算当前未解决数、新增数、解决数和关闭率等指标。项目聚类映射表 \verb|tb_project_cluster| 用于维护聚类名称与项目名称之间的对应关系，系统根据该表确定一个聚类包含的项目范围。聚类缺陷统计快照表 \verb|tb_bug_cluster_daily_snapshot| 用于保存聚类维度下的每日统计结果，包括快照日期、聚类名称、项目列表、当前未解决总数、今日新增、今日解决、超期未解决数量和关闭率等字段，用于后续趋势分析和历史数据查询。
+	\verb|tb_sync_bug|、\verb|tb_sync_jira| 和 \verb|tb_sync_bugclose| 分别保存来自不同缺陷系统的同步数据，主要字段包括缺陷编号、项目编号、缺陷状态、严重度、责任人、修复人、创建时间、修复时间和关闭时间等。项目聚类映射表 \verb|tb_project_cluster| 用于维护聚类名称与项目名称之间的对应关系，系统根据该表确定一个聚类包含的项目集合。聚类缺陷统计快照表 \verb|tb_bug_cluster_daily_snapshot| 用于保存聚类维度下的每日统计结果，包括快照日期、聚类名称、项目列表、当前未解决总数、今日新增、今日解决、超期未解决数量和关闭率等字段，主要用于缺陷解决情况的趋势分析和回溯查询。
 	
 	\item 
 	重大问题管理主要用于记录项目执行过程中需要重点跟踪的问题，并支撑问题登记、责任人处理、问题上升和闭环管理。该部分涉及的实体包括项目基础信息（\texttt{tb\_project\_\allowbreak baseinfo\_\allowbreak new}）、员工基础信息（\texttt{tb\_emp\_\allowbreak baseinfo}）、组织架构（\texttt{tb\_org\_tree}）和项目重大问题表（\texttt{tb\_project\_\allowbreak serious\_\allowbreak problem\_\allowbreak new}），其关系如图\ref{fig:er-serious-problem}所示。
@@ -244,9 +245,9 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 		\label{fig:er-serious-problem}
 	\end{figure}
 	
-	\verb|tb_project_serious_problem_new| 是重大问题管理模块的核心表，以 \verb|sp_no| 作为重大问题记录编号，保存问题单号、项目编号、南京项目经理、问题状态、首问闭环责任人、最终责任人、根因涉及部门、计划解决日期和实际解决日期等信息。项目基础信息表通过项目编号或项目名称与重大问题记录建立逻辑关联，用于确定问题所属项目及其项目经理信息。员工基础信息表通过 \verb|uid_code| 与重大问题表中的项目经理、责任人等字段建立业务关联，用于消息通知和责任人识别。组织架构表通过组织编码和组织负责人信息与根因部门字段关联，系统可根据根因涉及部门查询相应负责人，并将其纳入重大问题通知范围。
+	\verb|tb_project_serious_problem_new| 是重大问题管理模块的核心表，以 \verb|sp_no| 作为重大问题记录编号，保存问题单号、项目编号、南京项目经理、问题状态、首问闭环责任人、最终责任人、根因涉及部门、计划解决日期和实际解决日期等信息。项目基础信息表通过项目编号与重大问题记录建立逻辑关联，用于确定问题所属项目及其项目经理信息。员工基础信息表通过 \verb|uid_code| 与重大问题表中的项目经理、责任人等字段建立业务关联，用于飞书消息通知和责任人识别。组织架构表通过组织编码和组织负责人信息与根因部门字段关联，系统可根据根因涉及部门查询相应负责人，并将其纳入重大问题通知范围。
 	
 \end{enumerate}
 
 \section{本章小结}
-本章重点论述了系统核心业务模块的详细设计，介绍了各个功能模块有关的类和接口以及关联关系，同时详细展示了几个关键点的具体设计和优化，给出了数据库中相关表结构的设计。下一章节，将基于系统的详细设计方案，展开对系统实现与测试的介绍。
+本章重点论述了系统核心业务模块的详细设计，介绍了各个功能模块有关的类和接口的设计，同时详细展示了几个关键点的具体设计和优化，给出了数据库中相关表结构的设计。下一章将基于系统的详细设计方案，展开对系统实现与测试的介绍。
