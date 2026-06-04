@@ -372,8 +372,9 @@ BU工时统计分析主要为了让管理层能在宏观上把控公司在各个
 \begin{table}[htbp]
 	\centering
 	\caption{查询执行计划对比}
+	\label{tab:sql-exec-plan}
 	{\songti\seuwuhao\selectfont
-		\begin{tabular}{lllll}
+		\begin{tabular}{llll}
 			\toprule
 			版本 & type & key & Extra \\
 			\midrule
@@ -382,7 +383,6 @@ BU工时统计分析主要为了让管理层能在宏观上把控公司在各个
 			\bottomrule
 		\end{tabular}
 	}
-	\label{tab:sql-exec-plan}
 \end{table}
 
 由表可知，优化前查询的访问类型为 \texttt{ALL}，表示数据库需要对\texttt{tb\_sync\_wh} 表进行全表扫描且 key 列为\texttt{NULL}。其主要原因在于对 \texttt{work\_date} 这个索引使用了函数操作，使得该索引失效了。
