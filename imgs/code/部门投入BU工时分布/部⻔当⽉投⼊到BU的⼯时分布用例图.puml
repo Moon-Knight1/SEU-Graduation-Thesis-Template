@@ -1,0 +1,17 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor "部门经理" as PMO
+
+rectangle {
+  
+  usecase "查看BU工时分布" as ViewPie
+  usecase "查看特定BU详情" as ViewDetail
+
+  PMO -- ViewPie
+
+  ViewDetail ..> ViewPie : <<extend>>
+}
+@enduml

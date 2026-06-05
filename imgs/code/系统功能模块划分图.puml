@@ -1,0 +1,46 @@
+@startwbs
+<style>
+wbsDiagram {
+  fontSize 20
+  
+  /* 将所有的类选择器嵌套在 wbsDiagram 内部 */
+  .highlight-yellow {
+    BackgroundColor yellow
+  }
+  .highlight-orange {
+    BackgroundColor #FFE4C4
+  }
+  .highlight-red {
+    BackgroundColor #FFD2D2
+  }
+  .highlight-green {
+    BackgroundColor #D4F0D4
+  }
+}
+</style>
+
+* 玄武项目管理平台
+** 系统管理模块
+*** 用户管理
+*** 角色管理
+*** 菜单管理
+*** 系统监控
+*** 权限管理
+*** 日志管理
+** 公司运营管理模块
+*** 员工信息管理
+*** 组织架构管理
+*** 工时管理
+**** 部门投入BU工时分布 <<highlight-green>>
+*** KPI数据统计
+** 项目运营管理模块
+*** 项目基础信息管理 <<highlight-green>>
+*** 项目Scope管理
+*** 软件风险管理
+*** 横展问题管理
+*** 缺陷管理 <<highlight-green>>
+*** 发布计划管理
+*** 重大问题管理 <<highlight-green>>
+*** 售后问题管理
+*** 第三方测试报告管理
+@endwbs

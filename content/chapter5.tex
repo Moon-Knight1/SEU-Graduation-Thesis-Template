@@ -25,7 +25,7 @@ WorkHourController 作为工时管理模块的控制层类，主要负责接收�
 BU 工时分布统计用于展示指定年月、指定组织范围内各 BU 的工时占比情况，其核心业务流转如图\ref{fig:seq-bu-hour-distribution}所示。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/Seq/BU工时饼图时序图.png}
+	\includegraphics[width=0.9\linewidth]{imgs/Seq/BU工时饼图时序图.png}
 	\caption{BU工时饼图时序图}
 	\label{fig:seq-bu-hour-distribution}
 \end{figure}
@@ -37,7 +37,7 @@ BU 工时分布统计用于展示指定年月、指定组织范围内各 BU 的�
 当用户需要进一步查看某个 BU 的工时详情，可以点击饼图中对应位置，即可弹框展示详情，其业务逻辑如图\ref{fig:seq-bu-hour-detail}所示。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/Seq/BU详情时序图.png}
+	\includegraphics[width=0.9\linewidth]{imgs/Seq/BU详情时序图.png}
 	\caption{BU详情时序图}
 	\label{fig:seq-bu-hour-detail}
 \end{figure}
@@ -68,7 +68,7 @@ BU 工时分布统计用于展示指定年月、指定组织范围内各 BU 的�
 由图~\ref{fig:class-project-baseinfo} 可知，ProjectBaseinfoController 依赖 IProjectBaseinfoService 完成业务调用，避免控制层直接处理数据库操作。IProjectBaseinfoService 由 ProjectBaseinfoServiceImpl 实现，具体的项目信息处理逻辑集中在实现类中完成。ProjectBaseinfoServiceImpl 进一步调用 ProjectBaseinfoMapper 和 ProjectBaseinfoHistoryMapper 获取项目基础数据及历史记录数据。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/Seq/项目信息管理时序图.png}
+	\includegraphics[width=1.0\linewidth]{imgs/Seq/项目信息管理时序图.png}
 	\caption{项目信息管理时序图}
 	\label{fig:seq-project-baseinfo}
 \end{figure}
@@ -76,47 +76,49 @@ BU 工时分布统计用于展示指定年月、指定组织范围内各 BU 的�
 针对项目基本信息的“新增与更新”流程，系统在后端实现上重点保障了数据的安全性与可追溯性，其核心业务流转如图~\ref{fig:seq-project-baseinfo}所示。我们在 ProjectBaseinfoController 的新增和更新方法上加上了 @RequiresPermissions 注解，前端发起的 HTTP 请求会先经过请求处理层的 JWT 校验，通过后 Shiro 框架会拦截加了注解的方法，在方法执行前先查询预热到缓存的权限数据，如果没有就去数据库查询，检查当前用户是否有对应权限，并利用 \texttt{@Valid} 完成参数的合法性校验。进入业务层后，系统采用“主表+历史表”的双写策略：首先将最新的项目信息更新至MySQL主表；随后，通过构建当前操作的完整数据快照（涵盖新旧值、操作人及操作类型），并写入项目信息快照表。这种快照机制便于后续的项目审计与数据回滚操作。由于部分字段比如"近期交付阀点"和"近期阀点日期"修改比较频繁，可能导致快照表的体积变得太大，因此针对这部分的修改历史保存到交付历史变更表中。由于更新操作修改了多张表，需要在业务层的方法上加上 @Transactional 注解，将多表更新操作限制在单一事务中，以确保原子性和一致性。需要注意的是，在实际开发中，并不是在方法上加注解就可以高枕无忧了，事务包裹的范围应该尽可能小，否则可能会导致长事务的出现，很容易耗尽连接池导致数据库崩溃，同时长期持有的锁会引发大范围阻塞，并因阻碍日志清理而拖垮数据库性能。此外还要考虑注解失效的情景，避免在开发中犯这类错误。
 
 \subsection{缺陷管理}
-在企业实际研发过程中，项目缺陷数据来源较为分散，企业内部同时使用了 Trinity、Jira 以及 BugClose 这三个缺陷管理平台。其中，Trinity 为企业内部平台，另外两个是主流的缺陷管理工具。三个平台在使用过程中都会产生缺陷相关数据，这些数据的字段主要包括缺陷编号、缺陷标题、所属项目、缺陷状态、严重程度、责任人、创建时间、关闭时间等，共同反映了缺陷从发现到解决的处理过程。然而，各平台的导出的数据字段存在差异，比如 Jira 中缺陷状态可以是 To Do / In Progress / Resolved / Closed / Done / Reopened，在 BugClose 可能是新建 / 打开 / 修复中 / 已解决 / 已关闭 / 重新打开。如果只用一张表不方便管理，因此系统使用三张表进行存储，以保留各平台原有字段及业务含义。缺陷管理模块需要提供对这些缺陷表单独的分页查询，以及聚合统计出缺陷的解决比率，为项目质量人员提供项目健康度看板。
+在企业实际研发过程中，项目缺陷数据来源较为分散，企业内部同时使用了 Trinity、Jira 以及 BugClose 三个缺陷管理平台。其中，Trinity 为企业内部缺陷平台，Jira 和 BugClose 则用于不同项目或不同阶段的缺陷跟踪。三个平台在使用过程中都会产生缺陷编号、缺陷标题、所属项目、缺陷状态、严重程度、责任人、创建时间和关闭时间等信息，共同反映了缺陷从发现、处理到关闭的完整过程。系统使用了三张缺陷同步表来存储缺陷数据，并在业务层提供分页查询和项目聚类健康度分析等功能，为项目质量人员提供数据支持以及飞书消息提醒功能。
 
-BugController 作为控制层，负责接收前端请求，并调用对应的业务接口完成缺陷相关操作。BugService 用于定义缺陷管理的主要业务方法，BugServiceImpl 负责具体业务逻辑的实现。ProjectClusterService 主要用于提供项目聚类相关的数据支持，在缺陷统计和聚类展示中起到辅助作用。数据访问层中，BugMapper 负责缺陷数据的查询与维护，OrgMapper 用于获取组织相关信息。BugQueryRequest 用于封装缺陷查询条件，并继承 QueryRequest 中的通用查询参数；FebsResponse 用于统一封装接口返回结果。
-
-缺陷管理类图如图\ref{fig:class-bug}所示。
+缺陷管理类图如图\ref{fig:class-bug}所示。BugController 作为控制层，负责接收前端请求，并调用对应的业务接口完成缺陷相关操作。BugService 用于定义缺陷管理的主要业务方法，BugServiceImpl 负责具体业务逻辑的实现。ProjectClusterService 主要用于提供项目聚类相关的数据支持，在缺陷统计和聚类展示中起到辅助作用。数据访问层中，BugMapper 负责缺陷数据的查询与维护。BugQueryRequest 用于封装缺陷查询条件，并继承 QueryRequest 中的通用查询参数；FebsResponse 用于统一封装接口返回结果。
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.8\linewidth]{imgs/class/缺陷管理类图.png}
 	\caption{缺陷管理类图}
 	\label{fig:class-bug}
 \end{figure}
-%在这个部分定义了 BugQueryRequest 查询类，作为 QueryRequest 的子类，内部设置了自定义的条件过滤器集合，便于对多个字段进行多种条件筛选，业务处理层是该模块的计算核心。BugServiceImpl 注入了 BugMapper 来执行缺陷表的查询操作。BugServiceImpl 还注入了 ProjectClusterService，在处理“项目聚类统计汇总”这一业务时，能调用其中的方法来获取所有聚类名称或者根据聚类名称查询该聚类下的所有挂载项目清单。
 
 （1）项目聚类缺陷统计
 
-缺陷管理部分主要包括缺陷数据的分页查询以及项目聚类缺陷统计，其中，项目聚类缺陷统计的业务流程如图\ref{fig:seq-bug-cluster}所示。
-\begin{figure}[!htbp]
+缺陷管理部分主要包括项目聚类缺陷统计以及缺陷数据的分页查询，其中，项目聚类缺陷统计的业务流程如图\ref{fig:seq-bug-cluster}所示。
+\begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/Seq/项目聚类缺陷统计时序图.png}
+	\includegraphics[width=0.9\linewidth]{imgs/Seq/项目聚类缺陷统计时序图.png}
 	\caption{项目聚类缺陷统计时序图}
 	\label{fig:seq-bug-cluster}
 \end{figure}
-项目聚类缺陷统计主要用于对多个项目组成的聚类进行缺陷数据汇总分析。系统首先从项目聚类关系表中获取全部聚类名称，并根据聚类名称查询其包含的项目列表。随后，系统以项目为基本统计单元，分别从 Trinity 缺陷表、Jira 缺陷表和 BugClose 缺陷表中提取缺陷数据，并计算当前未解决缺陷数、新增缺陷数、解决缺陷数、超期未解决缺陷数以及关闭率等指标。最后以表格的形式展示给用户，对于一些关闭率低的项目聚类，还设置了定时任务发送飞书预警消息来提醒。
+项目聚类缺陷统计主要用于展示多个项目集合的缺陷整体情况，让用户了解项目集合的整体健康度。用户进入前端页面后，前端向后端发起聚类缺陷统计请求。后端控制层接收到请求后，首先调用项目聚类服务获取聚类名称集合。在获得聚类名称集合后，系统依次遍历每个聚类，并调用缺陷服务查询该聚类对应的缺陷统计结果。缺陷服务会优先读取聚类统计缓存，若缓存命中，则直接返回缓存中的统计数据；若缓存未命中，则根据聚类名称查询该聚类下包含的项目列表，并进一步统计这些项目在 Trinity、Jira 和 BugClose 等数据源中的缺陷数据。随后，业务层将各项目的缺陷统计结果聚合为聚类维度的统计结果，并写入缓存，以减少后续相同聚类统计请求对数据库的访问。
 
-考虑到聚类缺陷统计涉及多个数据表，查询成本较高，系统在设计中引入缓存机制。对于昨日新增、昨日解决、总缺陷数、关闭数以及聚类级历史统计等变化频率较低的数据，系统使用缓存保存统计结果；对于当前未解决缺陷数等实时性要求较高的数据，则在接口调用时进行实时计算，并与缓存结果合并后返回。该设计在保证统计结果实时性的同时，降低了数据库访问压力，提高了聚类缺陷看板的响应效率。
+出于对数据实时性和系统响应速度的权衡，在设计时对于昨日新增、昨日解决、责任人列表等变化频率较低的数据，先查询缓存，缓存中没有才去数据库拿到最新的；对于今日新增、今日解决、未解决总数等实时性要求较高的数据则在接口调用时进行实时计算，并将该实时结果与缓存中的其他统计指标进行合并。最终，控制层将所有聚类的统计结果统一封装后返回前端，前端将数据渲染为聚类缺陷统计表格，供用户查看各聚类的缺陷积压和处理情况。对于一些健康状态较差的项目聚类，还设置了定时任务发送飞书预警消息来提醒。
 
-（2）缺陷查询深分页优化
+（2）缺陷的分页查询以及代码优化
 
-系统前端提供了对三类缺陷数据表的分页查询功能。由于缺陷表数据量较大，当用户查询较靠后的页码时，普通分页方式的查询效率会明显下降。其原因在于，对于 LIMIT offset, N 语句，数据库需要先扫描 offset*N + N 条记录，再丢弃前 offset*N 条数据，最终返回当前页所需的 N 条记录。当偏移量较大时，会产生大量无效扫描；如果查询字段较多，还可能带来较多回表操作，从而影响接口响应速度\cite{botros2021highperformance}。
-\begin{figure}[htbp]
+缺陷数据分页查询主要面向 Trinity、Jira 和 BugClose 三类缺陷同步表。系统没有将三类缺陷数据直接合并到同一张表中，主要是因为三个平台虽然都用于记录缺陷，但字段结构、状态流转和业务含义存在差异，强行合并容易造成字段空值较多、语义混杂以及后期维护困难等问题。同时，不同平台的常用查询条件也不完全一致，按来源分别建表有利于针对各表特点建立索引，提高分页查询和统计分析效率，避免在一张表上建立太多索引。因此，系统在数据层分别保存不同来源的缺陷数据，在分页查询请求中指定查询哪张表，并将结果统一封装后返回前端。
+
+在初始设计中，缺陷的分页查询接口通过请求参数中的 source 字段判断查询哪张数据表，然后在 Service 层用 if-else 分支分别构造查询条件、调用对应 Mapper、执行分页查询和组装返回结果。这种实现方式虽然逻辑直观，但有着明显的设计问题，比如违反了开闭原则\cite{cabral2024solid}，代码冗余以及可维护性较差等。因此引入策略模式和工厂方法来对代码进行重构。系统首先定义统一的 BugPageQueryStrategy 策略接口，由 TrinityBugPageQueryStrategy、JiraBugPageQueryStrategy 和 BugClosePageQueryStrategy 分别封装不同数据源的查询逻辑；再通过 BugPageQueryStrategyFactory 根据 source 字段选择对应策略。这样，BugServiceImpl 不再直接关心具体查询哪张表，而是将请求委托给策略工厂和具体策略类处理，从而消除了业务层中的大量条件分支。类的结构如图\ref{fig:class-bug-query-design-pattern}所示。
+\begin{figure}[!htbp]
 	\centering
-	\includegraphics[width=0.65\linewidth]{imgs/Seq/缺陷查询深分页时序图.png}
-	\caption{缺陷分页查询时序图}
-	\label{fig:seq-bug-pagequery}
+	\includegraphics[width=1.0\linewidth]{imgs/class/缺陷查询设计模式类图.png}
+	\caption{设计模式类图}
+	\label{fig:class-bug-query-design-pattern}
 \end{figure}
 
-针对上述问题，系统在深分页查询中采用延迟关联的优化思路，如图\ref{fig:seq-bug-pagequery}所示。该方式先在子查询中根据筛选条件和排序字段查询当前页对应的主键，再通过主键关联原表获取完整缺陷信息。相比直接查询全部字段，该方法可以减少大量无效数据的回表操作，从而提升大数据量分页查询场景下的查询效率。普通分页查询与延迟关联分页查询的 SQL 对比如图 \ref{fig:sql-optimization-compare} 所示。
+同时，针对三类分页查询中共同存在的流程，进一步抽象出 BugPageQueryTemplate 模板类，将分页参数处理、公共查询条件构造、分页结果组装等通用步骤统一封装。具体策略类只需要实现差异化的查询条件和数据访问方法，例如字段映射、特殊过滤条件以及对应 Mapper 的分页查询。通过这种设计，公共流程得到了复用，数据源差异被隔离在具体策略类中。当后续需要查询新的缺陷数据表时，只需新增一个策略实现类并注册到策略工厂，无需修改原有主流程，从而提高了系统的扩展性、可维护性和代码结构的规范性。
+
+除了代码结构上的重构，还有性能上的优化。由于缺陷表数据量较大，当用户查询较靠后的页码时，普通分页方式的查询效率会明显下降，也就是深度分页问题。其原因在于，对于 SELECT * ... LIMIT offset, N 语句,MySQL 并非直接跳到 offset 处，而是先扫描并回表读取 offset + N 行数据，然后丢弃前 offset 行。随着 offset 增大，无效扫描和回表次数线性增长，导致大量磁盘 I/O 和 CPU 消耗\cite{botros2021highperformance}。
+
+针对上述问题，系统在深分页查询中采用延迟关联的优化思路。该方式先在子查询中利用覆盖索引查询当前页对应的主键，再通过主键关联原表获取完整缺陷信息。相比直接查询全部字段，该方法可以减少大量无效数据的回表操作，从而提升大数据量分页查询场景下的查询效率。普通分页查询与延迟关联分页查询的 SQL 对比如图 \ref{fig:sql-optimization-compare} 所示。
 \begin{figure}[htbp]
 \centering
-\noindent % 消除首行缩进，确保左侧完全对齐
-\begin{minipage}[t]{0.42\textwidth}
+\begin{minipage}[t]{0.45\textwidth}
 \textbf{普通分页}
 \begin{lstlisting}[language=SQL, frame=single, basicstyle=\ttfamily\small, breaklines=true, tabsize=4]
 SELECT * FROM tb_sync_bug
@@ -126,7 +128,7 @@ LIMIT 100000, 20;
 \end{lstlisting}
 \end{minipage}
 \hfill
-\begin{minipage}[t]{0.54\textwidth}
+\begin{minipage}[t]{0.45\textwidth}
 \textbf{延迟关联分页}
 \begin{lstlisting}[language=SQL, frame=single, basicstyle=\ttfamily\small, breaklines=true, tabsize=4]
 SELECT b.* FROM tb_sync_bug b
@@ -148,7 +150,7 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 重大问题管理模块面向项目执行过程中影响范围较大、处理周期较长或需要跨部门协调的问题，大致可分为问题登记、问题处理和问题关闭三个阶段。具体流程如图\ref{fig:serious-problem-process}所示。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/Flowchart/重大问题流程图.drawio.png}
+	\includegraphics[width=0.7\linewidth]{imgs/Flowchart/重大问题流程图.drawio.png}
 	\caption{重大问题流程图}
 	\label{fig:serious-problem-process}
 \end{figure}
@@ -166,7 +168,7 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 重大问题管理的核心业务流程如图\ref{fig:seq-serious-problem}所示。用户进入列表页面后，系统首先根据当前登录用户的身份判断其权限，查询并展示其可见的问题记录。用户可通过顶部筛选栏按多维度条件进行检索，也可点击"新增"按钮创建新的重大问题。
 \begin{figure}[!htbp]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/Seq/重大问题时序图.png}
+	\includegraphics[width=1.0\linewidth]{imgs/Seq/重大问题时序图.png}
 	\caption{重大问题时序图}
 	\label{fig:seq-serious-problem}
 \end{figure}
@@ -176,15 +178,14 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 \section{数据库设计}
 本节从概念设计和数据表设计两个层面展开：首先通过 E-R 图描述系统核心业务实体及其关系，明确数据模型的整体结构；随后对主要业务表的关键字段设计进行详细说明。
 \subsection{概念设计}
+由图\ref{fig:er-overall}可知，系统数据库以项目为主要业务对象进行组织。项目在系统中既是缺陷统计、工时记录和重大问题管理的关联对象。因此，在总体 ER 图中，项目实体位于业务数据关系的中心位置，并分别与缺陷、重大问题、工时记录、项目交付历史和项目聚类等实体建立联系。
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.8\linewidth]{imgs/ER/er-diagram-without.png}
+	\includegraphics[width=0.75\linewidth]{imgs/ER/er-diagram-without.png}
 	\caption{数据库E-R图}
 	\label{fig:er-overall}
 \end{figure}
-
-由图\ref{fig:er-overall}可知，系统数据库以项目为主要业务对象进行组织。项目在系统中既是缺陷统计、工时记录和重大问题管理的关联对象。因此，在总体 ER 图中，项目实体位于业务数据关系的中心位置，并分别与缺陷、重大问题、工时记录、项目交付历史和项目聚类等实体建立联系。
 
 组织和员工实体用于描述系统中的人员基础数据。组织实体记录组织编号、组织编码以及上级组织编号，用于表示企业内部的层级结构；员工实体记录员工编号、员工 UID 以及所属组织。员工与组织之间是一对多关系，即一个组织下可以包含多名员工，而每名员工归属于一个组织。
 

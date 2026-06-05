@@ -1,0 +1,80 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+' =========================
+' Controller
+' =========================
+class ProjectBaseinfoController {
+    - iProjectBaseinfoService : IProjectBaseinfoService
+    + pageQuery(ProjectQueryRequest) : List<ProjectBaseinfo>
+    + addTbProjectBaseinfo(ProjectBaseinfo) : void
+    + updateTbProjectBaseinfo(ProjectBaseinfo) : void
+    + downloadEasyExcel(ProjectBaseinfo, HttpServletResponse) : void
+    + findHistory(ProjectQueryRequest) : FebsResponse
+}
+
+' =========================
+' Service Interface
+' =========================
+interface IProjectBaseinfoService {
+    + pageQuery(ProjectQueryRequest) : IPage<ProjectBaseinfo>
+    + createProjectBaseinfo(ProjectBaseinfo) : void
+    + updateProjectBaseinfo(ProjectBaseinfo) : void
+    + findHistory(ProjectQueryRequest) : FebsResponse
+}
+
+' =========================
+' Service Implementation
+' =========================
+class ProjectBaseinfoServiceImpl {
+    - projectBaseinfoMapper : ProjectBaseinfoMapper
+    - projectBaseinfoHistoryMapper : ProjectBaseinfoHistoryMapper
+}
+
+' =========================
+' Mapper Interfaces
+' =========================
+interface ProjectBaseinfoMapper
+interface ProjectBaseinfoHistoryMapper
+
+' =========================
+' Query Objects
+' =========================
+class QueryRequest {
+    - pageNum : int
+    - pageSize : int
+    - sortField : String
+    - sortOrder : String
+}
+
+class ProjectQueryRequest {
+    - buName : String
+    - projectName : String
+}
+
+ProjectQueryRequest --|> QueryRequest
+
+' =========================
+' Response
+' =========================
+class FebsResponse {
+    + data(Object) : FebsResponse
+}
+
+' =========================
+' Relationships
+' =========================
+' Controller 持有 Service 实例（关联）
+ProjectBaseinfoController --> IProjectBaseinfoService
+
+' Controller 使用 Query 和 Response（依赖）
+ProjectBaseinfoController ..> ProjectQueryRequest
+ProjectBaseinfoController ..> FebsResponse
+
+' Service 实现关系
+IProjectBaseinfoService <|.. ProjectBaseinfoServiceImpl
+
+' ServiceImpl 持有 Mapper 实例（关联）
+ProjectBaseinfoServiceImpl --> ProjectBaseinfoMapper
+ProjectBaseinfoServiceImpl --> ProjectBaseinfoHistoryMapper
+@enduml

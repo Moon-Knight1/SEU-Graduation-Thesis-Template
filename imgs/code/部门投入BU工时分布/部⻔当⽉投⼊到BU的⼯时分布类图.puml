@@ -1,0 +1,70 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+' =========================
+' Controller
+' =========================
+class WorkHourController {
+    - workHourService : WorkHourService
+    + getWorkhourGroupByBu(query : WorkHourQueryDTO) : FebsResponse
+    + getBuDetail(query : WorkHourQueryDTO) : FebsResponse
+}
+
+' =========================
+' Service Interface
+' =========================
+interface WorkHourService {
+    + getWorkhourGroupByBu(query : WorkHourQueryDTO) : List
+    + getBuDetail(query : WorkHourQueryDTO) : BUDetailVO
+}
+
+' =========================
+' Service Implementation
+' =========================
+class WorkHourServiceImpl {
+    - workHourMapper : WorkHourMapper
+    - empBaseinfoMapper : EmpBaseinfoMapper
+    - projectBaseinfoMapper: ProjectBaseinfoMapper
+    - orgMapper : OrgMapper
+    - stringRedisTemplate : StringRedisTemplate
+}
+
+' =========================
+' Mapper Types (external)
+' =========================
+interface WorkHourMapper
+interface EmpBaseinfoMapper
+interface ProjectBaseinfoMapper
+interface OrgMapper
+
+' =========================
+' DTO & VO
+' =========================
+class WorkHourQueryDTO {
+    - year : Integer
+    - month : Integer
+    - orgId : String
+    - buName : String
+}
+
+class FebsResponse {
+    + data(data : Object) : FebsResponse
+}
+
+' =========================
+' Relationships
+' =========================
+' Association (field reference)
+WorkHourController --> WorkHourService
+WorkHourController --> WorkHourQueryDTO
+WorkHourController --> FebsResponse
+
+' Realization
+WorkHourService <|.. WorkHourServiceImpl
+
+' Association (field references from ServiceImpl)
+WorkHourServiceImpl --> WorkHourMapper
+WorkHourServiceImpl --> EmpBaseinfoMapper
+WorkHourServiceImpl --> ProjectBaseinfoMapper
+WorkHourServiceImpl --> OrgMapper
+@enduml

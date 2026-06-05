@@ -1,0 +1,45 @@
+
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '28px' }}}%%
+sequenceDiagram
+    actor User as 用户
+    participant Frontend as 前端
+    participant Controller as BugController
+    participant ClusterService as ProjectClusterService
+    participant BugService as BugService
+    participant BugMapper as BugMapper
+    participant Cache as Redis
+    participant DB as MySQL
+
+    User->>Frontend: 查看聚类缺陷统计
+    Frontend->>Controller: GET /bug/all-clusters
+
+    Controller->>ClusterService: 查询所有聚类
+    ClusterService->>DB: 读取项目聚类关系表
+    DB-->>ClusterService: 返回聚类列表
+    ClusterService-->>Controller: 返回聚类名称集合
+
+    loop 每个聚类
+        Controller->>BugService: 查询聚类缺陷统计
+
+        BugService->>Cache: 读取聚类统计缓存
+        alt 缓存未命中
+            BugService->>DB: 查询聚类下项目列表
+            DB-->>BugService: 返回项目列表
+            BugService->>BugMapper: 查询项目缺陷统计
+            BugMapper->>DB: 读取 Trinity、Jira、BugClose 数据
+            DB-->>BugMapper: 返回缺陷统计数据
+            BugMapper-->>BugService: 返回 Trinity、Jira、BugClose 统计
+            BugService->>Cache: 写入聚类统计缓存
+        else 缓存命中
+            Cache-->>BugService: 返回缓存统计
+        end
+
+        BugService->>BugMapper: 实时查询当前未解决缺陷数
+        BugMapper->>DB: 统计当前未解决缺陷数
+        DB-->>BugMapper: 返回未解决缺陷数
+        BugMapper-->>BugService: 返回未解决缺陷数
+        BugService-->>Controller: 返回聚类统计结果
+    end
+
+    Controller-->>Frontend: 返回聚类缺陷统计列表
+    Frontend-->>User: 展示统计表格

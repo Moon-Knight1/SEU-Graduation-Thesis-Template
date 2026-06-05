@@ -1,0 +1,46 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor "项目经理" as SPM
+/'actor "部门经理" as PMO'/
+actor "项目成员" as User
+
+rectangle {
+    usecase "基本信息管理" as ProjectBaseinfo
+    usecase "条件筛选" as ViewProjectList
+    usecase "查看项目详情" as ViewProjectDetail
+    usecase "新增项目" as AddProjectInfo
+    usecase "编辑项目" as EditProjectInfo
+
+    usecase "近期交付管理" as MileStone
+    usecase "填写交付内容" as EditWeeklyReport
+    usecase "查看交付历史" as ViewDeliveryHistory
+    
+    usecase "导出项目信息" as ExportExcel
+}
+
+' 项目经理权限在左侧
+SPM -- ProjectBaseinfo
+SPM -- MileStone
+
+' 用例关系（内部包含）
+ProjectBaseinfo -- ViewProjectList 
+ProjectBaseinfo -- ViewProjectDetail 
+ProjectBaseinfo -- AddProjectInfo 
+ProjectBaseinfo -- EditProjectInfo 
+ViewProjectList <.. ExportExcel : <<extend>>
+
+MileStone -- EditWeeklyReport 
+MileStone -- ViewDeliveryHistory 
+
+' PMO 权限，使用反向箭头使其自动排版到右侧
+/'ExportExcel -- PMO'/
+/'ViewProjectDetail  -- PMO'/
+/'ViewDeliveryHistory  -- PMO'/
+' User 权限
+ViewProjectDetail  -- User
+ViewDeliveryHistory  -- User
+ExportExcel -- User
+@enduml

@@ -1,0 +1,42 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam linetype ortho
+
+actor "质量人员" as PMO
+actor "项目成员" as User
+
+rectangle {
+    ' 顶层用例
+    usecase "查看缺陷列表" as ViewBugList
+    usecase "查看项目健康度" as ProjectCluster
+    usecase "项目聚类管理" as MaintainProjectCluster
+    usecase "接收缺陷提醒" as ReceiveFeishu
+
+    ' 子用例
+    usecase "导出缺陷数据" as ExportExcel
+    usecase "查看聚类缺陷详情" as ProjectClusterBugDetail
+    usecase "发送缺陷预警" as ProjectClusterFeishu
+    usecase "新增项目聚类" as AddProjectCluster
+    usecase "编辑项目聚类" as EditProjectCluster
+    usecase "删除项目聚类" as BatchDeleteProjectCluster
+}
+
+' 参与者关联
+PMO -- ViewBugList
+PMO -- ProjectCluster
+PMO -- MaintainProjectCluster
+PMO -- ProjectClusterBugDetail
+User -- ReceiveFeishu
+
+' 包含关系 (<<include>>)
+ProjectCluster <.. ProjectClusterFeishu : <<extend>>
+MaintainProjectCluster -- AddProjectCluster 
+MaintainProjectCluster -- EditProjectCluster 
+MaintainProjectCluster -- BatchDeleteProjectCluster 
+
+' 扩展关系 (<<extend>>)
+ExportExcel ..> ViewBugList : <<extend>>
+ExportExcel ..> ProjectClusterBugDetail : <<extend>>
+@enduml

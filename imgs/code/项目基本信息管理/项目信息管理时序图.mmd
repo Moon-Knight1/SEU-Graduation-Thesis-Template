@@ -1,0 +1,41 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '28px' }}}%%
+sequenceDiagram
+    actor User as 用户
+    participant FE as 前端
+    participant Ctrl as ProjectBaseinfoController
+    participant Svc as ProjectBaseinfoServiceImpl
+    participant TbPrjMapper as ProjectBaseinfoMapper
+    participant TbPrjHMapper as ProjectBaseinfoHistoryMapper
+    participant DB as MySQL
+
+    %% ================= 第二部分：近期交付更新流程 =================
+    User->>FE: 新增/更新请求
+    FE->>Ctrl: 
+    Ctrl->> Ctrl: 权限校验以及字段合法性校验
+    Ctrl->>Svc: 调用更新近期交付逻辑
+    
+    Svc->>Svc: ThreadLocal获取当前用户信息
+
+    Svc->>TbPrjMapper: 查询项目当前基本信息
+    TbPrjMapper->>DB:
+    DB-->>TbPrjMapper:
+    TbPrjMapper-->>Svc: 返回项目旧记录
+    
+    Note over Svc: 开启事务
+    Svc->>Svc: 对比新旧内容是否不同
+
+    Svc->>TbPrjMapper: 
+    TbPrjMapper->>DB: 写入项目信息主表
+    DB-->>Svc:
+        
+    Svc -->> Svc: 构建变更快照
+    Svc->>TbPrjHMapper: 
+    TbPrjHMapper->>DB: 写入变更历史表
+    DB-->>Svc:
+
+        
+    Svc-->>Ctrl: 执行成功
+    Note over Svc: 事务提交
+
+    Ctrl-->>FE: 
+    FE-->>User: 返回200 成功响应

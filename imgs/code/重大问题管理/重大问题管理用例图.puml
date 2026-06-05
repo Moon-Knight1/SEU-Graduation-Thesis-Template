@@ -1,0 +1,32 @@
+@startuml
+left to right direction
+skinparam shadowing false
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam linetype ortho
+skinparam usecase {
+  BorderColor #4A5568
+  BackgroundColor #F7FAFC
+  ArrowColor #4A5568
+}
+actor "质量人员" as Manager
+actor "项目成员" as Member
+rectangle {
+  usecase "筛选重大问题" as UC_Query
+  usecase "查看问题详情" as UC_View
+  usecase "新增重大问题" as UC_Add
+  usecase "编辑重大问题" as UC_Edit
+  usecase "导出问题数据" as UC_Export
+  usecase "统计分析问题" as UC_Stats
+  usecase "重大问题通知" as UC_Message
+}
+Manager -- UC_Query
+Manager -- UC_Stats
+Manager -- UC_Add
+Manager -- UC_Edit
+UC_Message -- Member
+
+UC_View ..> UC_Query : <<extend>>
+UC_Export ..> UC_Query : <<extend>>
+UC_Add ..> UC_Message: <<include>>
+@enduml

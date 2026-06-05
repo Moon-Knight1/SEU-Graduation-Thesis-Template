@@ -1,0 +1,45 @@
+
+%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '28px' }}}%%
+sequenceDiagram
+    actor User as 用户
+    participant Frontend as 前端
+    participant Controller as ProjectSeriousProblemController
+    participant Service as ProjectSeriousProblemServiceImpl
+    participant Mapper as ProjectSeriousProblemMapper
+    participant DB as MySQL
+    participant OrgService as OrgService
+    participant Feishu as IFeishuService
+    participant Handler as 责任人
+
+    User->>Frontend: 填写重大问题信息
+    Frontend->>Controller: POST /TbProjectSeriousProblem
+    Controller->>Service: 保存重大问题记录
+    Service->>Mapper: 插入重大问题数据
+    Mapper->>DB: 写入重大问题表
+    DB-->>Mapper: 返回保存结果
+    Mapper-->>Service: 返回保存结果
+
+    Controller->>Service: 发送重大问题通知
+    Service->>OrgService: 查询根因部门负责人
+    OrgService-->>Service: 返回部门负责人列表
+
+    loop 每个通知接收人
+        Service->>Feishu: 发送重大问题通知卡片
+        Feishu-->>Handler: 推送问题通知
+        Feishu-->>Service: 返回发送结果
+    end
+
+    Service-->>Controller: 返回处理结果
+    Controller-->>Frontend: 返回新增成功
+    Frontend-->>User: 显示提交成功
+
+    Handler->>Frontend: 查看问题并维护处理进展
+    Frontend->>Controller: PUT /TbProjectSeriousProblem/update
+    Controller->>Service: 更新重大问题进展
+    Service->>Mapper: 根据主键更新问题记录
+    Mapper->>DB: 更新重大问题表
+    DB-->>Mapper: 返回更新结果
+    Mapper-->>Service: 返回更新结果
+    Service-->>Controller: 返回处理结果
+    Controller-->>Frontend: 返回更新成功
+    Frontend-->>Handler: 显示更新成功

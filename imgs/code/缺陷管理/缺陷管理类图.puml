@@ -1,0 +1,71 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class BugController {
+    - bugService : BugService
+    - projectClusterService : ProjectClusterService
+    + pageQuery(request : BugQueryRequest) : FebsResponse
+    + getProjecsWithSource() : List<Map>
+    + getAllClustersAggregated() : FebsResponse
+    + batchDelete(ids : List<String>) : FebsResponse
+    + getUnresolvedDetailsByProject(projectId : String) : FebsResponse
+}
+
+interface BugService {
+    + pageQuery(request : BugQueryRequest) : IPage<Bug>
+    + selectDistinctProjectNamesWithSource() : List<Map>
+    + getBugDefectAggregatedByCluster(clusterName : String) : Map<String, Object>
+    + batchDelete(ids : List<String>) : void
+    + getUnresolvedBugDetailsByProject(projectId : String) : List<Bug>
+}
+
+interface ProjectClusterService {
+    + getAllClusters() : List<ProjectCluster>
+    + getClusterProjectByClusterName(name : String) : List<ProjectCluster>
+}
+
+class BugServiceImpl {
+    - bugMapper : BugMapper
+    - orgMapper : OrgMapper
+    - projectClusterService : ProjectClusterService
+}
+
+interface BugMapper{}
+interface OrgMapper{}
+
+class ProjectClusterServiceImpl {
+    - clusterMapper : ClusterMapper
+}
+
+class QueryRequest {
+}
+
+class BugQueryRequest {
+    - filters : List<Filter>
+}
+
+class FebsResponse {
+    + data(data : Object) : FebsResponse
+}
+
+' =========================
+' Relationships
+' =========================
+' Association (field reference)
+BugController --> BugService
+BugController --> ProjectClusterService
+BugController --> BugQueryRequest
+BugController --> FebsResponse
+
+' Realization
+BugService <|.. BugServiceImpl
+ProjectClusterService <|.. ProjectClusterServiceImpl
+
+' Association (field references from ServiceImpl)
+BugServiceImpl --> BugMapper
+BugServiceImpl --> OrgMapper
+BugServiceImpl --> ProjectClusterService
+
+' Generalization
+BugQueryRequest --|> QueryRequest
+@enduml

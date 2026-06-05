@@ -1,0 +1,93 @@
+---
+config:
+  layout: fixed
+---
+flowchart TB
+ subgraph R1[" "]
+    direction LR
+        F3["ECharts"]
+        F2["Ant Design Vue"]
+        F1["Vue"]
+        L1["前端展示层"]
+  end
+ subgraph R2[" "]
+    direction LR
+        B5["LDAP"]
+        B4["AOP 限流"]
+        B3["JWT"]
+        B2["Shiro 安全框架"]
+        B1["REST API"]
+        L2["请求处理层"]
+  end
+ subgraph R3[" "]
+    direction LR
+        C5["SMTP 邮件服务"]
+        C4["飞书接口"]
+        C3["项目运营管理"]
+        C2["公司运营管理"]
+        C1["系统管理"]
+        L3["业务逻辑层"]
+  end
+ subgraph R4[" "]
+    direction LR
+        D3["RedisTemplate"]
+        D2["P6Spy SQL 日志"]
+        D1["MyBatis-Plus"]
+        L4["数据访问层"]
+  end
+ subgraph R5[" "]
+    direction LR
+        E2["Redis"]
+        E1["MySQL"]
+        L5["数据层"]
+  end
+    L1 ~~~ F1
+    F1 ~~~ F2
+    F2 ~~~ F3
+    L2 ~~~ B1
+    B1 ~~~ B2
+    B2 ~~~ B3
+    B3 ~~~ B4
+    B4 ~~~ B5
+    L3 ~~~ C1
+    C1 ~~~ C2
+    C2 ~~~ C3
+    C3 ~~~ C4
+    C4 ~~~ C5
+    L4 ~~~ D1
+    D1 ~~~ D2
+    D2 ~~~ D3
+    L5 ~~~ E1
+    E1 ~~~ E2
+
+     F3:::techBox
+     F2:::techBox
+     F1:::techBox
+     L1:::layerTitle
+     B5:::techBox
+     B4:::techBox
+     B3:::techBox
+     B2:::techBox
+     B1:::techBox
+     L2:::layerTitle
+     C5:::techBox
+     C4:::techBox
+     C3:::techBox
+     C2:::techBox
+     C1:::techBox
+     L3:::layerTitle
+     D3:::techBox
+     D2:::techBox
+     D1:::techBox
+     L4:::layerTitle
+     E2:::techBox
+     E1:::techBox
+     L5:::layerTitle
+    classDef layerTitle fill:#0052b8,stroke:#0052b8,color:#ffffff,font-size:24px,font-weight:bold
+    classDef techBox fill:#ffffff,stroke:#0052b8,stroke-width:2px,color:#000000,font-size:20px
+    classDef rowBox fill:#f8fbff,stroke:#0052b8,stroke-width:2px,color:#000000
+    style R1 fill:#f8fbff,stroke:#0052b8,stroke-width:2px
+    style R2 fill:#f8fbff,stroke:#0052b8,stroke-width:2px
+    style R3 fill:#f8fbff,stroke:#0052b8,stroke-width:2px
+    style R4 fill:#f8fbff,stroke:#0052b8,stroke-width:2px
+    style R5 fill:#f8fbff,stroke:#0052b8,stroke-width:2px

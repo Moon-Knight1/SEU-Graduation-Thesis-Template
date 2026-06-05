@@ -1,0 +1,85 @@
+---
+config:
+  layout: dagre      # dagre 对水平布局支持更好
+  theme: base
+  fontSize: 24px     # 稍微缩小字体，节省空间
+  mmdc:
+    config:
+      dagre:
+        rankDir: LR  # 强制水平流向
+---
+erDiagram
+	项目基本信息表 {
+		varchar project_id PK "项目ID"  
+		varchar nj_pm_id  "项目经理ID"  
+	}
+
+	Trinity缺陷同步表 {
+		varchar id PK "主键ID"  
+		varchar workitem_id  "工作项ID"  
+		varchar bug_no  "缺陷编号"  
+		varchar bug_status  "缺陷状态"  
+		char severity  "严重度"  
+		varchar project_id FK "项目ID"  
+		varchar assignee_id  "责任人ID"  
+		varchar implementor_id  "修复人ID"  
+		char created_date  "创建时间"  
+		char implemented_date  "修复时间"  
+		char closed_date  "关闭时间"  
+		varchar resolution  "解决结果"  
+	}
+
+	Jira问题同步表 {
+		varchar issue_key UK "问题编号"  
+		varchar project_id FK "项目ID"  
+		varchar issue_type  "问题类型"  
+		varchar status  "状态"  
+		varchar severity  "严重度"  
+		varchar assignee_id  "责任人ID"  
+		varchar implementer_id  "修复人ID"  
+		varchar created_time  "创建时间"  
+		varchar fixed_time  "修复时间"  
+		varchar closed_time  "关闭时间"  
+		varchar resolution  "解决结果"  
+	}
+
+	BugClose缺陷同步表 {
+		int bug_id UK "BugClose缺陷ID"  
+		int bug_no  "缺陷编号"  
+		varchar bug_status  "缺陷状态"  
+		varchar priority  "优先级"  
+		varchar project_id FK "项目ID"  
+		int assignee_id  "责任人ID"  
+		int implementor_id  "修复人ID"  
+		datetime created_date  "创建时间"  
+		char implemented_date  "修复时间"  
+		datetime updated_time  "更新时间"  
+		varchar detected_version  "发现版本"  
+		varchar plan_version  "计划版本"  
+	}
+
+	项目聚类映射表 {
+		varchar cluster_name FK "项目聚类名称"  
+		varchar project_name FK "项目名称"  
+		varchar swpm_id  "项目经理ID"  
+	}
+
+	聚类每日Bug统计快照表 {
+		bigint id PK "主键ID"  
+		date snapshot_date  "快照日期"  
+		varchar cluster_name FK "聚类名称"  
+		text project_list  "项目列表"  
+		varchar swpm  "负责人"  
+		bigint unresolved_total  "未解决总数"  
+		bigint new_bugs_today  "今日新增"  
+		bigint resolved_today  "今日解决"  
+		bigint over_10_days_unresolved  "超10天未解决"  
+		double closure_rate  "关闭率"  
+		datetime created_at  "创建时间"  
+	}
+
+	项目基本信息表||--o{Trinity缺陷同步表:"project_id"
+	项目基本信息表||--o{Jira问题同步表:"project_id"
+	项目基本信息表||--o{BugClose缺陷同步表:"project_id"
+	项目基本信息表||--o{项目聚类映射表:"project_name"
+	项目聚类映射表}o--o{聚类每日Bug统计快照表:"cluster_name"

@@ -1,0 +1,43 @@
+---
+config:
+  layout: elk
+---
+erDiagram
+	direction LR
+	tb_org_tree {
+		int org_id PK "组织ID"  
+		int parent_id FK "上级组织ID"  
+	}
+
+	tb_emp_baseinfo {
+		int xh PK "记录号"  
+		int org_id FK "所属组织ID"  
+		varchar uid_code UK "员工UID"  
+		tinyint iden  "是否在职"  
+	}
+
+	tb_project_baseinfo_new {
+		varchar project_id PK "项目ID"  
+		varchar status  "项目状态"  
+		varchar bu  "所属BU"  
+		varchar nj_pm_id FK "南京项目经理ID"  
+	}
+
+	tb_project_serious_problem_new {
+		varchar sp_no PK "重大问题编号"  
+		varchar problem_no  "问题单号"  
+		varchar project_name FK "项目名称"  
+		varchar swpm_id FK "南京项目经理UID"  
+		varchar project_bu  "项目所属BU"  
+		varchar root_cause_dept  "根因涉及部门"  
+		varchar state  "问题状态"  
+		char problem_plan_solve_date  "计划解决日期"  
+		char problem_actual_solve_date  "实际解决日期"  
+		varchar create_date  "创建时间"  
+	}
+
+	tb_org_tree||--o{tb_org_tree:"parent_id -> org_id"
+	tb_org_tree||--o{tb_emp_baseinfo:"org_id"
+	tb_emp_baseinfo||--o{tb_project_baseinfo_new:"uid_code -> nj_pm_id"
+	tb_emp_baseinfo||--o{tb_project_serious_problem_new:"uid_code -> swpm_id"
+	tb_project_baseinfo_new||--o{tb_project_serious_problem_new:"project_name"

@@ -1,0 +1,39 @@
+---
+config:
+  layout: elk
+  theme: base
+  fontSize: 28px
+---
+erDiagram
+	direction LR
+	组织架构表 {
+		int org_id PK "组织ID"  
+		varchar org_code  "组织编码"  
+		int parent_id FK "上级组织ID"  
+	}
+
+	员工信息表 {
+		varchar uid_code UK "员工UID"  
+		int org_id FK "所属组织ID"  
+		tinyint iden  "是否在职"  
+	}
+
+	工时记录表 {
+		varchar id PK "工时记录ID"  
+		varchar uid FK "员工UID"  
+		datetime work_date  "工时日期"  
+		float hours  "员工工时"  
+		varchar work_type  "工时类型"  
+		varchar project_id FK "工时所属项目ID"  
+	}
+
+	项目信息表 {
+		varchar project_id PK "项目ID"  
+		varchar bu  "所属BU"  
+		varchar nj_pm_id FK "南京项目经理ID"  
+	}
+
+	组织架构表||--o{组织架构表:"parent_id -> org_id"
+	组织架构表||--o{员工信息表:"org_id -> org_id"
+	员工信息表||--o{工时记录表:"uid_code -> uid"
+	项目信息表||--o{工时记录表:"project_id -> project_id"

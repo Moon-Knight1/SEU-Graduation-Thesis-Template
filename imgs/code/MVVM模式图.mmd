@@ -1,0 +1,15 @@
+---
+config:
+  layout: dagre
+---
+flowchart LR
+    VM[ViewModel] <--> V[View]
+    VM <--> M[Model]
+
+    classDef viewStyle fill:#ffff99,stroke:#d6d6b8,stroke-width:3px,color:#000,font-size:18px;
+    classDef viewModelStyle fill:#7ee36f,stroke:#d6d6b8,stroke-width:3px,color:#000,font-size:18px;
+    classDef modelStyle fill:#8ecad6,stroke:#d6d6b8,stroke-width:3px,color:#000,font-size:18px;
+
+    class V viewStyle;
+    class VM viewModelStyle;
+    class M modelStyle;

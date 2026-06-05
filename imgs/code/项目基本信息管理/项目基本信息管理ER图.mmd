@@ -1,0 +1,49 @@
+---
+config:
+  layout: elk
+  theme: base
+  fontSize: 28px
+---
+erDiagram
+	direction LR
+	tb_emp_baseinfo { 
+		varchar uid_code UK "员工UID"  
+        int org_id  "所属组织ID" 
+		tinyint iden  "在职标记"  
+	}
+
+	tb_project_baseinfo_new {
+		varchar project_id PK "项目ID"  
+		varchar status  "项目状态"  
+		varchar bu  "所属BU"  
+		varchar customer  "客户名称"  
+		varchar nj_pm_id FK "南京项目经理ID"  
+		varchar curr_milestone  "当前里程碑"  
+		varchar recent_delivery_content  "近期交付阀点"  
+		char recent_delivery_date  "近期阀点日期"  
+	}
+
+	tb_project_baseinfo_new_his {
+		int xh PK "历史记录号"  
+		varchar project_id FK "项目ID"  
+		varchar status  "项目状态"  
+		varchar bu  "所属BU"  
+        char(1) level "项目级别"
+        datetime milestone_plandate "里程碑计划时间"
+		varchar submitter_id  "记录提交人"  
+		datetime submitted_time  "提交时间"  
+		tinyint operation_flag  "操作标记"  
+	}
+
+	tb_project_delivery_history {
+		bigint id PK "主键ID"  
+		varchar project_id FK "关联项目ID"  
+		varchar old_recent_delivery_content  "修改前交付阀点"  
+		char old_recent_delivery_date  "修改前阀点日期"  
+		datetime update_time  "修改时间"  
+		varchar update_by  "操作人"  
+	}
+
+	tb_emp_baseinfo||--o{tb_project_baseinfo_new:"担任南京项目经理"
+	tb_project_baseinfo_new||--o{tb_project_baseinfo_new_his:"产生变更历史"
+	tb_project_baseinfo_new||--o{tb_project_delivery_history:"记录交付历史"

@@ -1,0 +1,89 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide empty members
+
+' =========================
+' 1. 先定义所有接口（避免引用未定义的类）
+' =========================
+interface IProjectBaseinfoService {
+  + findById(Long) : Object
+}
+
+interface IEmpBaseinfoService {
+    + findAllWithOrganization() : List
+}
+
+interface OrgService {
+    + fetchOrgLeaderByOrganCode(String) : Set
+}
+
+interface IFeishuService {
+    + sendTemplateCard(String, String, String, Map) : void
+    + sendCardBatch(List, String) : boolean
+}
+
+interface IProjectSeriousProblemService {
+    + pageQuery(ProjectSeriousProblemQueryRequest) : IPage
+    + createProjectSeriousProblem(ProjectSeriousProblem) : void
+    + updateProjectSeriousProblem(ProjectSeriousProblem) : void
+    + queryProblemItem() : Map
+    + sendNotification(ProjectSeriousProblem) : void
+}
+
+' =========================
+' 2. 定义 Mapper
+' =========================
+interface ProjectSeriousProblemMapper {
+  + selectPage(IPage, Map) : IPage
+}
+
+' =========================
+' 3. 定义实体类
+' =========================
+class ProjectSeriousProblemController {
+    - projectSeriousProblemService : IProjectSeriousProblemService
+    - feishuService : IFeishuService
+    + pageQuery(ProjectSeriousProblemQueryRequest) : Map
+    + addProjectSeriousProblem(ProjectSeriousProblem) : void
+    + updateProjectSeriousProblem(ProjectSeriousProblem) : void
+    + queryProblemItem() : Map
+    + downloadExcel(ProjectSeriousProblemQueryRequest, HttpServletResponse) : void
+    + sendFeishuNotificationCard(Map) : void
+}
+
+class ProjectSeriousProblemServiceImpl {
+    - projectSeriousProblemMapper : ProjectSeriousProblemMapper
+    - projectBaseinfoService : IProjectBaseinfoService
+    - empBaseinfoService : IEmpBaseinfoService
+    - iFeishuService : IFeishuService
+    - orgService : OrgService
+}
+
+' =========================
+' 4. 定义请求对象
+' =========================
+class QueryRequest {}
+
+class ProjectSeriousProblemQueryRequest {
+    - spNo : String
+    - customer : String
+    - swpmId : String
+}
+
+' =========================
+' 5. 定义关系
+' =========================
+ProjectSeriousProblemQueryRequest --|> QueryRequest
+
+ProjectSeriousProblemController --> IProjectSeriousProblemService
+ProjectSeriousProblemController --> IFeishuService
+ProjectSeriousProblemController ..> ProjectSeriousProblemQueryRequest
+
+IProjectSeriousProblemService <|.. ProjectSeriousProblemServiceImpl
+
+ProjectSeriousProblemServiceImpl --> ProjectSeriousProblemMapper
+ProjectSeriousProblemServiceImpl --> IProjectBaseinfoService
+ProjectSeriousProblemServiceImpl --> IEmpBaseinfoService
+ProjectSeriousProblemServiceImpl --> IFeishuService
+ProjectSeriousProblemServiceImpl --> OrgService
+@enduml
