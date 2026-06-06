@@ -52,10 +52,13 @@ def create_cover_slide(prs, src_shapes_xml=None):
     if src_shapes_xml is None:
         src_shapes_xml = [deepcopy(shape._element) for shape in prs.slides[0].shapes]
 
+    # 每次创建幻灯片时深拷贝形状XML，避免lxml元素父子关系冲突
+    shapes_copy = [deepcopy(xml) for xml in src_shapes_xml]
+
     # 使用空白布局创建新幻灯片，再将封面形状复制进来
     slide_layout = prs.slide_layouts[7]  # 空白布局
     slide = prs.slides.add_slide(slide_layout)
-    for shape_xml in src_shapes_xml:
+    for shape_xml in shapes_copy:
         slide.shapes._spTree.append(shape_xml)
 
     # 设置论文标题
@@ -118,10 +121,13 @@ def create_toc_slide(prs, src_shapes_xml=None):
     if src_shapes_xml is None:
         src_shapes_xml = [deepcopy(shape._element) for shape in prs.slides[1].shapes]
 
+    # 每次创建幻灯片时深拷贝形状XML，避免lxml元素父子关系冲突
+    shapes_copy = [deepcopy(xml) for xml in src_shapes_xml]
+
     # 使用空白布局创建目录页，再将形状复制进来
     slide_layout = prs.slide_layouts[7]
     slide = prs.slides.add_slide(slide_layout)
-    for shape_xml in src_shapes_xml:
+    for shape_xml in shapes_copy:
         slide.shapes._spTree.append(shape_xml)
 
     # 更新各章节文本
@@ -174,10 +180,13 @@ def create_content_slide(prs, title_cn, title_en, section_num,
     if src_shapes_xml is None:
         src_shapes_xml = [deepcopy(shape._element) for shape in prs.slides[2].shapes]
 
+    # 每次创建幻灯片时深拷贝形状XML，避免lxml元素父子关系冲突
+    shapes_copy = [deepcopy(xml) for xml in src_shapes_xml]
+
     # 使用空白布局创建新幻灯片，再将形状复制进来
     slide_layout = prs.slide_layouts[7]  # 空白布局
     slide = prs.slides.add_slide(slide_layout)
-    for shape_xml in src_shapes_xml:
+    for shape_xml in shapes_copy:
         slide.shapes._spTree.append(shape_xml)
 
     # 设置中文标题
@@ -214,28 +223,131 @@ def create_content_slide(prs, title_cn, title_en, section_num,
     return slide
 
 
+def create_project_overview_slide(prs, src_shapes_xml=None):
+    """创建项目概述页"""
+    content_items = [
+        "背景：汽车电子软件研发企业，项目过程数据分散，统计分析依赖人工",
+        "目标：构建数字化运营平台，整合项目、组织、人员、工时、质量数据",
+        "用户角色：部门经理、项目经理、项目成员、质量人员",
+        "业务范围：项目管理、公司运营管理、系统管理"
+    ]
+
+    return create_content_slide(
+        prs,
+        title_cn="项目概述",
+        title_en="Project Overview",
+        section_num="01",
+        content_items=content_items,
+        src_shapes_xml=src_shapes_xml
+    )
+
+
+def create_architecture_slide(prs, src_shapes_xml=None):
+    """创建系统架构页"""
+    content_items = [
+        "五层架构：前端展示层、请求处理层、业务逻辑层、数据访问层、数据层",
+        "技术栈：Spring Boot + Vue + MySQL + Redis + MyBatis-Plus",
+        "前后端分离：B/S架构，RESTful API",
+        "安全框架：Shiro + JWT + LDAP统一认证"
+    ]
+
+    return create_content_slide(
+        prs,
+        title_cn="系统架构设计",
+        title_en="System Architecture Design",
+        section_num="01",
+        content_items=content_items,
+        src_shapes_xml=src_shapes_xml
+    )
+
+
+def create_bu_hour_function_slide(prs, src_shapes_xml=None):
+    """创建BU工时功能页"""
+    content_items = [
+        "需求：部门经理查看各BU工时投入分布，支持按年月、组织筛选",
+        "核心功能：饼图展示BU工时占比、BU详情（总工时、平均工时、趋势图）",
+        "设计：WorkHourController → WorkHourService → WorkHourMapper",
+        "数据流转：前端查询 → 参数校验 → 组织树遍历 → 工时聚合 → 饼图渲染"
+    ]
+
+    return create_content_slide(
+        prs,
+        title_cn="BU工时分布模块",
+        title_en="BU Work Hour Distribution",
+        section_num="02",
+        content_items=content_items,
+        src_shapes_xml=src_shapes_xml
+    )
+
+
+def create_bu_hour_optimization_slide(prs, src_shapes_xml=None):
+    """创建BU工时优化页"""
+    content_items = [
+        "问题：DATE_FORMAT函数导致work_date索引失效，全表扫描",
+        "方案：将月份筛选改写为日期范围查询，避免在索引字段上使用函数",
+        "效果：访问类型从ALL变为range，成功命中idx_wh_work_date索引",
+        "缓存策略：Redis缓存（当月1小时，历史24小时，随机抖动防雪崩）"
+    ]
+
+    return create_content_slide(
+        prs,
+        title_cn="BU工时模块优化",
+        title_en="BU Work Hour Optimization",
+        section_num="02",
+        content_items=content_items,
+        src_shapes_xml=src_shapes_xml
+    )
+
+
+def create_project_info_slide(prs, src_shapes_xml=None):
+    """创建项目信息管理页"""
+    content_items = [
+        "需求：项目经理维护项目基础信息，记录交付历史",
+        "核心功能：项目CRUD、条件筛选、Excel导出、交付历史追溯",
+        "设计：主表+历史表双写策略，保证数据可追溯",
+        "权限控制：@RequiresPermissions注解，Shiro框架"
+    ]
+
+    return create_content_slide(
+        prs,
+        title_cn="项目基本信息管理",
+        title_en="Project Information Management",
+        section_num="02",
+        content_items=content_items,
+        src_shapes_xml=src_shapes_xml
+    )
+
+
+def get_slide_shapes_xml(prs, slide_index):
+    """获取指定幻灯片的形状XML副本列表
+
+    Args:
+        prs: Presentation对象
+        slide_index: 幻灯片索引
+
+    Returns:
+        形状XML元素的深拷贝列表
+    """
+    return [deepcopy(shape._element) for shape in prs.slides[slide_index].shapes]
+
+
 if __name__ == "__main__":
     prs = load_template()
 
-    # 在清除前复制模板幻灯片的形状数据
-    cover_shapes_xml = [deepcopy(shape._element) for shape in prs.slides[0].shapes]
-    toc_shapes_xml = [deepcopy(shape._element) for shape in prs.slides[1].shapes]
-    content_shapes_xml = [deepcopy(shape._element) for shape in prs.slides[2].shapes]
+    # Capture template slide shapes before clearing
+    cover_shapes = get_slide_shapes_xml(prs, 0)  # 封面
+    toc_shapes = get_slide_shapes_xml(prs, 1)    # 目录
+    section_shapes = get_slide_shapes_xml(prs, 2) # section标题页
 
-    # 清空模板幻灯片
     clear_all_slides(prs)
 
-    # 创建幻灯片
-    create_cover_slide(prs, cover_shapes_xml)
-    create_toc_slide(prs, toc_shapes_xml)
-
-    # 测试内容页模板函数
-    create_content_slide(
-        prs,
-        title_cn="项目概述与系统架构",
-        title_en="Project Overview and Architecture",
-        section_num="01",
-        src_shapes_xml=content_shapes_xml,
-    )
+    # Create slides
+    create_cover_slide(prs, cover_shapes)
+    create_toc_slide(prs, toc_shapes)
+    create_project_overview_slide(prs, section_shapes)
+    create_architecture_slide(prs, section_shapes)
+    create_bu_hour_function_slide(prs, section_shapes)
+    create_bu_hour_optimization_slide(prs, section_shapes)
+    create_project_info_slide(prs, section_shapes)
 
     save_ppt(prs, OUTPUT_PATH)
