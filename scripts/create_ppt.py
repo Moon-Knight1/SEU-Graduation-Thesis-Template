@@ -318,6 +318,159 @@ def create_project_info_slide(prs, src_shapes_xml=None):
     )
 
 
+def create_bug_management_function_slide(prs, src_shapes_xml=None):
+    """创建缺陷管理功能页"""
+    content_items = [
+        "需求：质量人员统一查看Trinity、Jira、BugClose三个平台的缺陷数据",
+        "核心功能：缺陷分页查询、项目聚类统计、健康度分析、飞书预警",
+        "设计：BugController → BugService → BugMapper",
+        "数据源：三张同步表分别存储不同平台的缺陷数据"
+    ]
+
+    return create_content_slide(
+        prs,
+        title_cn="缺陷管理模块",
+        title_en="Bug Management Module",
+        section_num="02",
+        content_items=content_items,
+        src_shapes_xml=src_shapes_xml
+    )
+
+
+def create_bug_management_optimization_slide(prs, src_shapes_xml=None):
+    """创建缺陷管理优化页"""
+    content_items = [
+        "问题1：if-else分支处理三个数据源，违反开闭原则",
+        "方案1：策略模式+模板方法模式重构，定义BugPageQueryStrategy接口",
+        "问题2：深分页查询LIMIT offset, N效率低下",
+        "方案2：延迟关联优化，先用覆盖索引查询主键，再关联获取完整数据",
+        "效果：5K页从35736ms降至73.2ms，提升488倍"
+    ]
+
+    return create_content_slide(
+        prs,
+        title_cn="缺陷管理优化",
+        title_en="Bug Management Optimization",
+        section_num="02",
+        content_items=content_items,
+        src_shapes_xml=src_shapes_xml
+    )
+
+
+def create_serious_problem_function_slide(prs, src_shapes_xml=None):
+    """创建重大问题管理功能页"""
+    content_items = [
+        "需求：跟踪项目执行过程中的重大问题，支持全生命周期管理",
+        "核心功能：问题登记、处理、上升、关闭，飞书卡片通知",
+        "设计：问题状态自动判定（按时关闭/超期关闭/超期未关闭）",
+        "流程：问题登记 → 责任人处理 → 问题上升（可选） → 问题关闭"
+    ]
+
+    return create_content_slide(
+        prs,
+        title_cn="重大问题管理模块",
+        title_en="Serious Problem Management",
+        section_num="02",
+        content_items=content_items,
+        src_shapes_xml=src_shapes_xml
+    )
+
+
+def create_serious_problem_optimization_slide(prs, src_shapes_xml=None):
+    """创建重大问题管理优化页"""
+    content_items = [
+        "问题：用户连续点击提交按钮导致重复数据入库",
+        "方案：自定义@RepeatSubmit注解 + Redis + 拦截器",
+        "流程：拦截器判断注解 → 拼接Redis Key → 判断是否重复 → 放行或拒绝",
+        "优势：注解式使用，代码复用，支持多模块"
+    ]
+
+    return create_content_slide(
+        prs,
+        title_cn="重大问题管理优化",
+        title_en="Serious Problem Optimization",
+        section_num="02",
+        content_items=content_items,
+        src_shapes_xml=src_shapes_xml
+    )
+
+
+def create_functional_test_slide(prs, src_shapes_xml=None):
+    """创建功能测试页"""
+    content_items = [
+        "测试范围：四个核心模块的功能测试、边界测试、安全性测试",
+        "测试用例：共25个测试用例，覆盖正常流程和异常场景",
+        "测试结果：所有用例均符合预期",
+        "测试方法：黑盒测试，从实际企业运营场景出发"
+    ]
+
+    return create_content_slide(
+        prs,
+        title_cn="功能测试",
+        title_en="Functional Testing",
+        section_num="03",
+        content_items=content_items,
+        src_shapes_xml=src_shapes_xml
+    )
+
+
+def create_performance_test_slide(prs, src_shapes_xml=None):
+    """创建性能测试页"""
+    content_items = [
+        "深分页优化：5K页从35736ms降至73.2ms",
+        "索引优化：从全表扫描（ALL）优化为范围查询（range）",
+        "缓存策略：Redis缓存减少数据库查询压力",
+        "测试方法：AOP切面耗时测量，多次执行取平均值"
+    ]
+
+    return create_content_slide(
+        prs,
+        title_cn="性能测试",
+        title_en="Performance Testing",
+        section_num="03",
+        content_items=content_items,
+        src_shapes_xml=src_shapes_xml
+    )
+
+
+def create_conclusion_slide(prs, src_shapes_xml=None):
+    """创建总结页"""
+    content_items = [
+        "工作成果：完成四个核心模块的设计与实现，系统已在公司内部使用",
+        "技术收获：策略模式、延迟关联、索引优化、自定义注解",
+        "不足与展望：框架版本升级、功能扩展（部门运营管理、研发效能度量）",
+        "未来方向：Spring Boot 3.x + Vue 3 + Java 21虚拟线程"
+    ]
+
+    return create_content_slide(
+        prs,
+        title_cn="总结与展望",
+        title_en="Conclusion and Prospects",
+        section_num="04",
+        content_items=content_items,
+        src_shapes_xml=src_shapes_xml
+    )
+
+
+def create_acknowledgement_slide(prs, src_shapes_xml=None):
+    """创建致谢页"""
+    content_items = [
+        "感谢指导教师的悉心指导",
+        "感谢同学和家人的支持",
+        "感谢答辩老师的宝贵意见",
+        "谢谢大家！"
+    ]
+
+    return create_content_slide(
+        prs,
+        title_cn="致 谢",
+        title_en="Acknowledgements",
+        section_num="05",
+        content_items=content_items,
+        src_shapes_xml=src_shapes_xml
+    )
+
+
 def get_slide_shapes_xml(prs, slide_index):
     """获取指定幻灯片的形状XML副本列表
 
@@ -341,13 +494,51 @@ if __name__ == "__main__":
 
     clear_all_slides(prs)
 
-    # Create slides
+    # Create all 15 slides
+    print("创建封面页...")
     create_cover_slide(prs, cover_shapes)
+
+    print("创建目录页...")
     create_toc_slide(prs, toc_shapes)
+
+    print("创建项目概述页...")
     create_project_overview_slide(prs, section_shapes)
+
+    print("创建系统架构页...")
     create_architecture_slide(prs, section_shapes)
+
+    print("创建BU工时功能页...")
     create_bu_hour_function_slide(prs, section_shapes)
+
+    print("创建BU工时优化页...")
     create_bu_hour_optimization_slide(prs, section_shapes)
+
+    print("创建项目信息管理页...")
     create_project_info_slide(prs, section_shapes)
 
+    print("创建缺陷管理功能页...")
+    create_bug_management_function_slide(prs, section_shapes)
+
+    print("创建缺陷管理优化页...")
+    create_bug_management_optimization_slide(prs, section_shapes)
+
+    print("创建重大问题管理功能页...")
+    create_serious_problem_function_slide(prs, section_shapes)
+
+    print("创建重大问题管理优化页...")
+    create_serious_problem_optimization_slide(prs, section_shapes)
+
+    print("创建功能测试页...")
+    create_functional_test_slide(prs, section_shapes)
+
+    print("创建性能测试页...")
+    create_performance_test_slide(prs, section_shapes)
+
+    print("创建总结页...")
+    create_conclusion_slide(prs, section_shapes)
+
+    print("创建致谢页...")
+    create_acknowledgement_slide(prs, section_shapes)
+
     save_ppt(prs, OUTPUT_PATH)
+    print(f"\nPPT创建完成！共 {len(prs.slides)} 页")
