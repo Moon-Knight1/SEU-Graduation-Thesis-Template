@@ -1,0 +1,108 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="防重复提交流程图" id="duplicate-submit-flow">
+    <mxGraphModel dx="1848" dy="1175" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="A" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="用户点击提交" vertex="1">
+          <mxGeometry height="50" width="120" x="40" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="B" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="请求进入拦截器" vertex="1">
+          <mxGeometry height="50" width="140" x="210" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="C" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="方法上是否有注解?" vertex="1">
+          <mxGeometry height="70" width="130" x="410" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="Jj2X_e-k9gXAX-P3uRht-1" edge="1" parent="1" source="D" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" target="M">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2000.0000000000005" y="395.7692307692307" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="D" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="直接放行" vertex="1">
+          <mxGeometry height="50" width="120" x="610" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="E" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="读取本次请求参数" vertex="1">
+          <mxGeometry height="50" width="150" x="610" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="F" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="拼接 Redis Key" vertex="1">
+          <mxGeometry height="50" width="140" x="820" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="G" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="缓存中是否存在该 Key?" vertex="1">
+          <mxGeometry height="80" width="150" x="1020" y="135" as="geometry" />
+        </mxCell>
+        <mxCell id="H" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="首次提交存入 Redis 并设置过期时间" vertex="1">
+          <mxGeometry height="60" width="190" x="1240" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Jj2X_e-k9gXAX-P3uRht-2" edge="1" parent="1" source="D2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" target="M">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="D2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="请求放行" vertex="1">
+          <mxGeometry height="50" width="150" x="1490" y="65" as="geometry" />
+        </mxCell>
+        <mxCell id="I" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="参数相同 且 时间间隔 &lt; 设定值?" vertex="1">
+          <mxGeometry height="90" width="180" x="1240" y="235" as="geometry" />
+        </mxCell>
+        <mxCell id="J" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="判定为重复提交" vertex="1">
+          <mxGeometry height="50" width="150" x="1490" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="K" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="返回错误提示 不允许重复提交" vertex="1">
+          <mxGeometry height="60" width="190" x="1700" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="L" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="更新 Redis 记录" vertex="1">
+          <mxGeometry height="50" width="140" x="1490" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="D3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="请求放行" vertex="1">
+          <mxGeometry height="50" width="150" x="1700" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="M" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="返回响应" vertex="1">
+          <mxGeometry height="50" width="120" x="1990" y="255" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="A" style="endArrow=block;html=1;rounded=0;" target="B">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="B" style="endArrow=block;html=1;rounded=0;" target="C">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="C" style="endArrow=block;html=1;rounded=0;" target="D" value="没有">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="C" style="endArrow=block;html=1;rounded=0;" target="E" value="有">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="E" style="endArrow=block;html=1;rounded=0;" target="F">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="F" style="endArrow=block;html=1;rounded=0;" target="G">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="G" style="endArrow=block;html=1;rounded=0;" target="H" value="不存在">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="H" style="endArrow=block;html=1;rounded=0;" target="D2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="G" style="endArrow=block;html=1;rounded=0;" target="I" value="存在">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="I" style="endArrow=block;html=1;rounded=0;" target="J" value="是">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="J" style="endArrow=block;html=1;rounded=0;" target="K">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="I" style="endArrow=block;html=1;rounded=0;" target="L" value="否">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="L" style="endArrow=block;html=1;rounded=0;" target="D3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="D3" style="endArrow=block;html=1;rounded=0;" target="M">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="K" style="endArrow=block;html=1;rounded=0;" target="M">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

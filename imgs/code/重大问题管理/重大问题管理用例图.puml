@@ -17,7 +17,7 @@ rectangle {
   usecase "新增重大问题" as UC_Add
   usecase "编辑重大问题" as UC_Edit
   usecase "导出问题数据" as UC_Export
-  usecase "统计分析问题" as UC_Stats
+  usecase "统计问题" as UC_Stats
   usecase "重大问题通知" as UC_Message
 }
 Manager -- UC_Query
