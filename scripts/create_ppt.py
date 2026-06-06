@@ -142,12 +142,85 @@ def create_toc_slide(prs, src_shapes_xml=None):
 
     return slide
 
+def create_content_slide(prs, title_cn, title_en, section_num,
+                         content_items=None, src_shapes_xml=None):
+    """创建内容页（章节标题页）
+
+    通过复制模板第2页（第1章章节标题页）来创建内容页。
+    模板章节标题页共11个形状，结构一致：
+      0  - 中文标题文本框
+      1  - 英文标题文本框
+      2  - 章节编号文本框（"01"、"02"等大字）
+      3  - 底部装饰线
+      4  - 底部装饰矩形
+      5  - 顶部装饰线
+      6  - 顶部装饰矩形
+      7  - 页脚组合
+      8  - 页眉文字（"止于至善"）
+      9  - 校徽图片
+      10 - 右上角装饰组合
+
+    Args:
+        prs: Presentation对象
+        title_cn: 中文标题字符串
+        title_en: 英文标题字符串
+        section_num: 章节编号字符串（如 "01"、"02"）
+        content_items: 内容条目列表（可选），若提供则创建包含内容文本的文本框
+        src_shapes_xml: 预先复制的形状XML列表，如果为None则从模板第2页获取
+
+    Returns:
+        创建的幻灯片对象
+    """
+    if src_shapes_xml is None:
+        src_shapes_xml = [deepcopy(shape._element) for shape in prs.slides[2].shapes]
+
+    # 使用空白布局创建新幻灯片，再将形状复制进来
+    slide_layout = prs.slide_layouts[7]  # 空白布局
+    slide = prs.slides.add_slide(slide_layout)
+    for shape_xml in src_shapes_xml:
+        slide.shapes._spTree.append(shape_xml)
+
+    # 设置中文标题
+    slide.shapes[0].text_frame.text = title_cn
+
+    # 设置英文标题
+    slide.shapes[1].text_frame.text = title_en
+
+    # 设置章节编号
+    slide.shapes[2].text_frame.text = section_num
+
+    # 如果提供了内容条目，在页面下方创建内容文本框
+    if content_items:
+        from pptx.util import Inches, Pt
+        from pptx.enum.text import PP_ALIGN
+
+        left = Inches(1.0)
+        top = Inches(2.0)
+        width = Inches(8.0)
+        height = Inches(3.5)
+        txBox = slide.shapes.add_textbox(left, top, width, height)
+        tf = txBox.text_frame
+        tf.word_wrap = True
+
+        for i, item in enumerate(content_items):
+            if i == 0:
+                p = tf.paragraphs[0]
+            else:
+                p = tf.add_paragraph()
+            p.text = item
+            p.font.size = Pt(14)
+            p.space_after = Pt(6)
+
+    return slide
+
+
 if __name__ == "__main__":
     prs = load_template()
 
     # 在清除前复制模板幻灯片的形状数据
     cover_shapes_xml = [deepcopy(shape._element) for shape in prs.slides[0].shapes]
     toc_shapes_xml = [deepcopy(shape._element) for shape in prs.slides[1].shapes]
+    content_shapes_xml = [deepcopy(shape._element) for shape in prs.slides[2].shapes]
 
     # 清空模板幻灯片
     clear_all_slides(prs)
@@ -155,5 +228,14 @@ if __name__ == "__main__":
     # 创建幻灯片
     create_cover_slide(prs, cover_shapes_xml)
     create_toc_slide(prs, toc_shapes_xml)
+
+    # 测试内容页模板函数
+    create_content_slide(
+        prs,
+        title_cn="项目概述与系统架构",
+        title_en="Project Overview and Architecture",
+        section_num="01",
+        src_shapes_xml=content_shapes_xml,
+    )
 
     save_ppt(prs, OUTPUT_PATH)
