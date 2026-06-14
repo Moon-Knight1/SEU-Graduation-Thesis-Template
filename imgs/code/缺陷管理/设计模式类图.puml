@@ -1,4 +1,5 @@
 @startuml
+skinparam defaultFontSize 35
 skinparam classAttributeIconSize 0
 skinparam packageStyle rectangle
 left to right direction
@@ -14,7 +15,7 @@ left to right direction
         + pageQuery(request : BugQueryRequest) : IPage
     }
 
-    abstract class AbstractBugPageQueryStrategy<T> {
+    abstract class AbstractBugPageQueryTemplate<T> {
         # doPageQuery(request : BugQueryRequest) : IPage
         # buildWrapper(request : BugQueryRequest) : QueryWrapper<T>
         # applyFilterToWrapper(wrapper : QueryWrapper<T>, filter : Filter) : void
@@ -35,11 +36,11 @@ left to right direction
         + pageQuery(request : BugQueryRequest) : IPage
     }
 
-BugPageQueryStrategyFactory o--> BugPageQueryStrategy : 注册和维护策略集合
+BugPageQueryStrategyFactory o--> BugPageQueryStrategy
 
-BugPageQueryStrategy <|.. AbstractBugPageQueryStrategy
-AbstractBugPageQueryStrategy <|-- TrinityBugPageQueryStrategy
-AbstractBugPageQueryStrategy <|-- JiraBugPageQueryStrategy
-AbstractBugPageQueryStrategy <|-- BugClosePageQueryStrategy
+BugPageQueryStrategy <|.. AbstractBugPageQueryTemplate
+AbstractBugPageQueryTemplate<|-- TrinityBugPageQueryStrategy
+AbstractBugPageQueryTemplate<|-- JiraBugPageQueryStrategy
+AbstractBugPageQueryTemplate<|-- BugClosePageQueryStrategy
 
 @enduml

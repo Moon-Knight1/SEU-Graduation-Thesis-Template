@@ -1,4 +1,5 @@
 @startuml
+skinparam defaultFontSize 35
 skinparam classAttributeIconSize 0
 
 class BugController {

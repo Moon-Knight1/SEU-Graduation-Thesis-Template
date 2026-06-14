@@ -1,0 +1,65 @@
+@startuml 重大问题管理核心业务图
+
+title 重大问题管理核心图
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam activity {
+  BackgroundColor #F8FAFC
+  BorderColor #4A5568
+  FontColor #1A202C
+  FontSize 15
+  DiamondBackgroundColor #FFF7E6
+  DiamondBorderColor #D69E2E
+  StartColor #38A169
+  EndColor #E53E3E
+}
+skinparam swimlane {
+  BorderColor #CBD5E0
+  TitleBackgroundColor #E2E8F0
+  TitleFontColor #1A202C
+}
+
+|提出人|
+start
+:发现项目重大问题;
+
+|质量人员|
+:登记问题，指定责任人;
+
+|责任人/责任部门|
+:分析问题原因;
+:制定解决计划;
+:处理问题并反馈结果;
+
+|质量人员|
+:跟踪处理进展;
+
+while (问题是否解决?) is (否)
+
+  |责任人/责任部门|
+  if (是否需要上升处理?) then (否)
+    :继续处理并反馈结果;
+  else (是)
+    |管理层|
+    :协调资源并推动处理;
+
+    |责任人/责任部门|
+    :根据协调结果继续整改;
+    :反馈处理结果;
+  endif
+
+  |质量人员|
+  :再次跟踪处理进展;
+
+endwhile (是)
+
+:确认处理结果;
+:更新问题状态为“已关闭”;
+
+|提出人|
+:查看处理结果;
+
+stop
+
+@enduml

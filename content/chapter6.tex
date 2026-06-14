@@ -1,7 +1,7 @@
 \chapter{系统测试}
 本章对所实现的功能进行测试。对系统的部门投入 BU 工时分布、项目基本信息管理、缺陷管理和重大问题管理这几个核心功能模块进行展示与测试，最后从系统的响应时间指标等对系统的非功能性需求进行测试和评估。
 \section{测试环境}
-为保证系统测试结果的真实性与有效性，首先需要明确软件的测试环境。以下列出了数据库、缓存中间件及前后端框架的基础配置参数与版本信息，如表\ref{tab:software-env}所示，测试时采用的客户端是 Windows 操作系统，浏览器是谷歌浏览器。
+为保证系统测试结果的真实性与有效性，首先需要明确软件的测试环境。以下列出了数据库、缓存中间件及前后端框架的基础配置参数与版本信息，如表~\ref{tab:software-env}所示，测试时采用的客户端是 Windows 操作系统，浏览器是谷歌浏览器。
 % 表 6.1：软件环境
 \begin{table}[H]
 	\centering
@@ -47,20 +47,20 @@
 \section{功能测试}
 功能性测试旨在验证系统各项业务模块是否满足需求规格说明书的要求。本节将从实际的企业运营场景出发，依序对 BU 工时统计分析、项目基本信息管理、缺陷管理以及重大问题管理四个核心业务模块展开黑盒测试，以确保核心功能的逻辑正确性与数据完整性。
 \subsection{部门投入 BU 工时分布功能测试}
-BU工时统计分析主要为了让管理层能在宏观上把控公司在各个 BU 的工时投入占比，以及特定 BU 模块的详细工时，便于即时对比 BU 的整体工时投入情况和预算数据，从而进行及时的管理干预。用户进入该界面后，系统默认展示当月工时数据及投入 BU 的占比情况，页面展示效果如图\ref{fig:res-bu-hour-piechart}所示，用户点击部门下拉框，即可看到树状的组织结构进行选择，也可以点击时间进行选择。点击某个 BU 模块后就会弹出 BU 详情对话框，显示总工时、平均工时、加班工时等数据，并以折线图的形式展示近六个月以来公司投入到该 BU 的工时趋势，页面效果如图\ref{fig:res-bu-detail-linechart}所示，具体的测试用例及结果如表\ref{tab:bu_testcase}所示。
+BU 工时统计分析主要为了让管理层能在宏观上把控公司在各个 BU 的工时投入占比，以及特定 BU 模块的详细工时，便于即时对比 BU 的整体工时投入情况和预算数据，从而进行及时的管理干预。用户进入该界面后，系统默认展示当月工时数据及投入 BU 的占比情况，页面展示效果如图~\ref{fig:res-bu-hour-piechart}所示，用户点击部门下拉框，即可看到树状的组织结构进行选择，也可以点击时间进行选择。点击某个 BU 模块后就会弹出 BU 详情对话框，显示总工时、平均工时、加班工时等数据，并以折线图的形式展示近六个月以来公司投入到该 BU 的工时趋势，页面效果如图~\ref{fig:res-bu-detail-linechart}所示，具体的测试用例及结果如表~\ref{tab:bu_testcase}所示。
 
 \begin{table}[H]
 	\centering
-	\caption{BU工时统计接口测试用例}
+	\caption{BU 工时统计接口测试用例}
 	\label{tab:bu_testcase}
 	{\songti\seuwuhao\selectfont
 		\begin{tabular}{p{0.7cm} p{2.4cm} p{3.2cm} p{3.4cm} p{2.3cm}}
 			\toprule
 			编号 & 测试用例 & 测试步骤 & 预期结果 & 测试结果 \\
 			\midrule
-			TC01 & BU工时分布查询 & 用户点击组织下拉框选择一个组织节点，点击时间日历框选择年月，点击搜索按钮 & 返回各 BU 的工时数、占比，渲染成饼图 & 符合预期 \\
+			TC01 & BU 工时分布查询 & 用户点击组织下拉框选择一个组织节点，点击时间日历框选择年月，点击搜索按钮 & 返回各 BU 的工时数、占比，渲染成饼图 & 符合预期 \\
 			\addlinespace[2pt]
-			TC02 & BU详情查询 & 点击饼图的某一块，选定要查询的BU名称 & 返回该 BU 的总工时、平均工时、加班工时、趋势 & 符合预期 \\
+			TC02 & BU 详情查询 & 点击饼图的某一块，选定要查询的 BU 名称 & 返回该 BU 的总工时、平均工时、加班工时、趋势 & 符合预期 \\
 			\bottomrule
 		\end{tabular}
 	}
@@ -69,7 +69,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控公司在各个
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.75\linewidth]{imgs/res/BU工时饼图.png}
-	\caption{BU工时分布饼图}
+	\caption{BU 工时分布饼图}
 	\label{fig:res-bu-hour-piechart}
 \end{figure}
 \begin{figure}[htbp]
@@ -81,7 +81,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控公司在各个
 
 \FloatBarrier
 \subsection{项目基本信息管理测试}
-项目基本信息管理模块提供项目全生命周期的基础数据维护功能，即项目管理的立项阶段。本节对该模块的核心功能进行测试验证。图\ref{fig:res-project-list}展示的是项目管理界面，包括项目信息的增删改查、Excel导出等，用户更新项目信息后，可以查看更改历史，如图\ref{fig:res-project-weekly}所示，该模块的测试用例及结果如表\ref{tab:proj_testcase}所示。
+项目基本信息管理模块提供项目全生命周期的基础数据维护功能，即项目管理的立项阶段。本节对该模块的核心功能进行测试验证。图~\ref{fig:res-project-list}展示的是项目管理界面，包括项目信息的增删改查、Excel 导出等，用户更新项目信息后，可以查看更改历史，如图~\ref{fig:res-project-weekly}所示，该模块的测试用例及结果如表~\ref{tab:proj_testcase}所示。
 \begin{table}[H]
 	\centering
 	\caption{项目基础信息管理测试用例}
@@ -97,7 +97,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控公司在各个
 			\addlinespace[2pt]
 			TC05 & 修改项目信息 & 点击要修改项目的操作列按钮，修改数据后点击保存 & 更新成功 & 符合预期 \\
 			\addlinespace[2pt]
-			TC06 & 导出Excel & 点击导出按钮 & 下载包含当前数据的 xlsx 文件到本地 & 符合预期 \\
+			TC06 & 导出 Excel & 点击导出按钮 & 下载包含当前数据的 xlsx 文件到本地 & 符合预期 \\
 			\addlinespace[2pt]
 			TC07 & 获取项目详情 & 点击高亮的项目名称 & 进入项目的详细信息界面 & 符合预期 \\
 			\addlinespace[2pt]
@@ -123,7 +123,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控公司在各个
 
 \FloatBarrier
 \subsection{缺陷管理测试}
-缺陷管理模块整合了Trinity、Jira和BugClose三个数据源的缺陷数据，查询结果如图\ref{fig:res-bug-pagequery}所示。
+缺陷管理模块整合了 Trinity、Jira 和 BugClose 三个数据源的缺陷数据，查询结果如图~\ref{fig:res-bug-pagequery}所示。
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.8\linewidth]{imgs/res/项目缺陷报表.png}
@@ -131,7 +131,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控公司在各个
 	\label{fig:res-bug-pagequery}
 \end{figure}
 
-除了提供基础的查询功能，还提供了以聚类为维度提供多项目缺陷看板。用户点击菜单侧边栏后，主页面以表格形式展示各聚类的未解决总数、新增数、解决数、关闭率等关键指标，并以红黄绿灯状态标识项目健康度，点击状态灯会弹出预警弹窗，点击按钮可以提醒相关人员，如图\ref{fig:bug-cluster-demo}(a)所示。点击聚类名称可进一步查看其下各项目的缺陷详单，如图\ref{fig:bug-cluster-demo}(b)所示，缺陷管理的测试用例及结果如表\ref{tab:bug_cluster_testcase}所示。
+除了提供基础的查询功能，还以聚类为维度提供多项目缺陷看板。用户点击菜单侧边栏后，主页面以表格形式展示各聚类的未解决总数、新增数、解决数、关闭率等关键指标，并以红黄绿灯状态标识项目健康度，点击状态灯会弹出预警弹窗，点击按钮可以提醒相关人员，如图~\ref{fig:bug-cluster-demo}(a)所示。点击聚类名称可进一步查看其下各项目的缺陷详单，如图~\ref{fig:bug-cluster-demo}(b)所示，缺陷管理的测试用例及结果如表~\ref{tab:bug_cluster_testcase}所示。
 %\begin{figure}[htbp]
 %	\centering
 %	\includegraphics[width=0.75\linewidth]{imgs/res/缺陷聚类飞书通知弹窗.png}
@@ -189,7 +189,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控公司在各个
 
 \subsection{重大问题管理测试}
 重大问题管理模块用于记录和跟踪项目执行过程中出现的重大异常事件，覆盖问题从发现登记、根因分析、
-方案制定到实施关闭的完整闭环流程，重大问题管理页面如图\ref{fig:serious-problem}所示。
+方案制定到实施关闭的完整闭环流程，重大问题管理页面如图~\ref{fig:serious-problem}所示。
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\linewidth]{imgs/res/重大问题管理界面图.png}
@@ -197,7 +197,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控公司在各个
 	\label{fig:serious-problem}
 \end{figure}
 
-同时集成了飞书卡片通知机制，在问题新增时自动推送消息至相关责任人，飞书卡片消息提醒效果如图\ref{fig:feishu-message-serious-problem}所示。这个模块还支持图表来可视化重大问题的分布情况，统计结果如图\ref{fig:serious-problem-statistics}所示，便于了解哪些项目的重大问题比较突出。
+同时集成了飞书卡片通知机制，在问题新增时自动推送消息至相关责任人，飞书卡片消息提醒效果如图~\ref{fig:feishu-message-serious-problem}所示。这个模块还支持图表来可视化重大问题的分布情况，统计结果如图~\ref{fig:serious-problem-statistics}所示，便于了解哪些项目的重大问题比较突出。
 \begin{figure}[htbp]
 	\centering
 	\begin{subfigure}[b]{0.45\textwidth}
@@ -222,7 +222,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控公司在各个
 	\label{fig:serious-problem-statistics}
 \end{figure}
 
-该模块的测试用例及结果如表\ref{tab:serious_problem_testcase}所示。
+该模块的测试用例及结果如表~\ref{tab:serious_problem_testcase}所示。
 \begin{table}[H]
 	\centering
 	\caption{重大问题管理接口测试用例}
@@ -249,7 +249,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控公司在各个
 \end{table}
 
 \subsection{各功能的边界测试}
-各功能的边界测试用例及结果如表\ref{tab:boundary_testcase}所示。
+各功能的边界测试用例及结果如表~\ref{tab:boundary_testcase}所示。
 \begin{table}[H]
 	\centering
 	\caption{边界测试用例表}
@@ -259,13 +259,13 @@ BU工时统计分析主要为了让管理层能在宏观上把控公司在各个
 			\toprule
 			编号 & 测试用例 & 测试步骤 & 预期结果 & 测试结果 \\
 			\midrule
-			TC20 & 查询 BU 工时分布 & 不输入组织id或者不输入年月 & 饼图部分展示一个空数据页面 & 符合预期 \\
+			TC20 & 查询 BU 工时分布 & 不输入组织 ID 或者不输入年月 & 饼图部分展示一个空数据页面 & 符合预期 \\
 			\addlinespace[2pt]
 			TC21 & 修改项目交付历史 & 点击编辑，不修改内容，保存后查看交付历史 & 交付时间轴上节点没有新增 & 符合预期 \\
 			\addlinespace[2pt]
 			TC22 & 项目名称重复新增 & 新增项目时使用已存在的项目名 & 返回”项目名称重复，请检查” & 符合预期 \\
 			\addlinespace[2pt]
-			TC23 & 飞书receivers为空 & 发送飞书消息传空receivers列表 & 返回飞书通知发送失败 & 符合预期 \\
+			TC23 & 飞书 receivers 为空 & 发送飞书消息传空 receivers 列表 & 返回飞书通知发送失败 & 符合预期 \\
 			\bottomrule
 		\end{tabular}
 	}
@@ -275,7 +275,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控公司在各个
 在确保系统功能满足业务需求的基础上，系统的稳定性、安全性以及性能响应同样是企业级应用不可忽视的重要指标。本节将从边界异常处理、数据越权访问防护以及海量数据并发查询等维度展开非功能性评估。
 
 \subsection{安全性测试}
-安全测试主要看重大问题部分系统是否支持权限划分，即普通用户、项目经理以及管理员登录后，对重大问题查询的可见性是否符合预期的效果。用例及测试结果如表\ref{tab:serious_problem_safety_testcase}所示。
+安全测试主要看重大问题部分系统是否支持权限划分，即普通用户、项目经理以及管理员登录后，对重大问题查询的可见性是否符合预期的效果。用例及测试结果如表~\ref{tab:serious_problem_safety_testcase}所示。
 \begin{table}[H]
 	\centering
 	\caption{安全性测试用例表}
@@ -368,7 +368,7 @@ BU工时统计分析主要为了让管理层能在宏观上把控公司在各个
 (2) BU 工时性能测试
 
 在第五章分析了部门投入 BU 工时统计功能需要按照月份汇总各业务部门的工时投入情况。初始实现在筛选月份时使用\texttt{DATE\_FORMAT} 函数对工时日期字段进行格式化处理，再与目标年月进行比较。该写法虽然能够实现月份筛选，但由于在索引字段上使用了函数计算，数据库难以直接利用
-\texttt{work\_date} 字段上的索引进行范围定位，可能导致大规模数据下扫描行数增加。针对上述问题，本文将月份筛选条件改写为日期范围查询。优化前后的执行计划对比如表\ref{tab:sql-exec-plan}所示。
+\texttt{work\_date} 字段上的索引进行范围定位，可能导致大规模数据下扫描行数增加。针对上述问题，本文将月份筛选条件改写为日期范围查询。优化前后的执行计划对比如表~\ref{tab:sql-exec-plan}所示。
 \begin{table}[htbp]
 	\centering
 	\caption{查询执行计划对比}

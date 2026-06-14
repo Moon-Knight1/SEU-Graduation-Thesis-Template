@@ -1,0 +1,60 @@
+@startuml 项目缺陷健康监测业务图
+
+title 项目缺陷健康监测业务图
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam activity {
+  BackgroundColor #F8FAFC
+  BorderColor #4A5568
+  FontColor #1A202C
+  FontSize 15
+  DiamondBackgroundColor #FFF7E6
+  DiamondBorderColor #D69E2E
+  StartColor #38A169
+  EndColor #E53E3E
+}
+skinparam swimlane {
+  BorderColor #CBD5E0
+  TitleBackgroundColor #E2E8F0
+  TitleFontColor #1A202C
+}
+
+|质量人员|
+start
+:进入项目缺陷健康看板;
+
+|系统|
+:加载缺陷统计数据;
+:展示项目灯状态;
+
+|质量人员|
+:按条件筛选项目;
+
+if (是否存在异常项目?) then (否)
+  :确认项目状态正常;
+else (是)
+  :查看预警原因;
+
+  if (是否发送预警?) then (否)
+    :持续观察异常项目;
+  else (是)
+    :发送飞书预警;
+
+    |责任人/责任部门|
+    :接收预警提醒;
+    :分析原因并处理缺陷;
+
+    |质量人员|
+    :跟踪缺陷处理结果;
+  endif
+endif
+
+|质量人员|
+if (是否导出统计结果?) then (是)
+  :导出缺陷统计 Excel 报表;
+endif
+
+stop
+
+@enduml
