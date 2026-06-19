@@ -1,0 +1,104 @@
+\documentclass{seuthesis}
+
+\usepackage{float}        % 支持 [H]（如果仍需要）
+\usepackage{placeins}     % 防止浮动体乱窜
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage[ruled,linesnumbered,algochapter]{algorithm2e}
+\setlist[enumerate,1]{label=(\arabic*)}
+
+% 定制 SQL 代码样式
+\lstset{
+	language=SQL,
+	basicstyle=\ttfamily\small,
+	keywordstyle=\color{blue},
+	commentstyle=\color{gray},
+	stringstyle=\color{red},
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	stepnumber=1,
+	numbersep=5pt,
+	frame=single,
+	breaklines=true,
+	showstringspaces=false,
+	captionpos=b
+}
+
+\setlength{\textfloatsep}{10pt}    % 双栏浮动体与正文间距（单栏也生效）
+\setlength{\floatsep}{8pt}         % 浮动体之间的间距
+\setlength{\intextsep}{8pt}        % [h] 浮动体与上下文的间距
+
+\newcommand{\demobox}[2]{\fbox{\rule{0pt}{#2}\rule{#1}{0pt}}}
+
+\addkey{汽车电子软件}{Automotive Electronic Software}
+\addkey{数字化运营平台}{Digital Operation Platform}
+\addkey{项目管理}{Project Management}
+\addkey{质量跟踪}{Quality Tracking}
+\addkey{B/S架构}{B/S Architecture}
+
+\seusetup{
+  title                          = {面向企业级场景的汽车},
+  subtitle                       = {数字化运营平台的升级开发},
+  author                         = {高晨荐},
+  student_id                     = {71122234},
+  school                         = {软件学院},
+  major                          = {软件工程},
+  supervisor                     = {廖力、季丹（企业）},
+  date_range                     = {2026.1——2026.5},
+  cover_date                     = {2026-05-30},
+  originality_date               = {\today},
+  authorization_author_date      = {\today},
+  authorization_supervisor_date  = {\today},
+  ai_scope                       = {2},
+  ai_used                        = yes,
+  ai_checkbox_style              = checkedbox,
+  signature_student_image        = {imgs/gaochenjian.png},
+  signature_teacher_image        = {imgs/liaoli.png},
+  ai_student_date                = {\today},
+  ai_teacher_date                = {\today},
+  ai_teacher_comment             = {经审阅，学生已如实说明人工智能工具在论文写作过程中的使用情况。相关内容均在本人理解和分析的基础上进行了必要的修改、补充与完善，未发现违反学术规范的情形，故同意上述说明。
+  }
+}
+%面向企业级场景的汽车数字化运营平台的升级开发
+
+\seuaiitem{
+  tool_version = {DeepSeek-V4},
+  process = {在使用PlantUML,Mermaid等网站画图时，辅助生成网站语法的代码，图的结构和内容由本人设计修改},
+  pages   = {第三章 3.2（P10）、第五章 5.1（P20）}
+}
+
+\begin{document}
+
+% 封面、独创性声明等（查重不需要，注释掉）
+\seumakefrontmatter
+% 无实际内容输出，仅做页面格式切换（注释掉）
+\seuprefacematter
+% 摘要标题 + 关键词——保留
+\seumakechineseabstract
+% Abstract 标题 + Keywords——保留
+\seumakeenglishabstract
+% 目录——保留
+\seumaketableofcontents
+% 正文开始——保留
+\seumainmatter
+\input{content/chapter1.tex}
+\input{content/chapter2.tex}
+\input{content/chapter3.tex}
+\input{content/chapter4.tex}
+\input{content/chapter5.tex}
+\input{content/chapter6.tex}
+\input{content/chapter7.tex}
+
+% 参考文献——看情况
+\seuprintbibliography
+
+\appendix
+% 附录章节
+% \input{content/appendix-a.tex}
+% 致谢——注释
+\input{content/acknowledgements.tex}
+% 论文最后一页——注释
+\seumottopage
+
+\end{document}

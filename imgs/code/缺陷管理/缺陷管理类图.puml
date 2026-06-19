@@ -32,7 +32,6 @@ class BugServiceImpl {
 }
 
 interface BugMapper{}
-interface OrgMapper{}
 
 class ProjectClusterServiceImpl {
     - clusterMapper : ClusterMapper
@@ -64,7 +63,6 @@ ProjectClusterService <|.. ProjectClusterServiceImpl
 
 ' Association (field references from ServiceImpl)
 BugServiceImpl --> BugMapper
-BugServiceImpl --> OrgMapper
 BugServiceImpl --> ProjectClusterService
 
 ' Generalization

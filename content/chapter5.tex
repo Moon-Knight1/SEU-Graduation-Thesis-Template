@@ -237,8 +237,7 @@ ORDER BY page_ids.created_date DESC, page_ids.id ASC;
 	\end{figure}
 	
 	\verb|tb_project_baseinfo_new| 用于保存项目最新的基本信息，包括项目编号、项目状态、所属 BU、客户名称、南京项目经理、当前里程碑、近期交付阀点等字段。其中，\verb|project_id| 是项目的唯一标识，\verb|nj_pm_id| 用于关联员工基础信息表中的项目经理。项目基础信息历史表 \verb|tb_project_baseinfo_new_his| 用于保存项目基础信息的变更记录，记录项目状态、所属 BU、里程碑计划时间、提交人和提交时间等信息。项目交付阀点历史表 \verb|tb_project_delivery_history| 用于保存近期交付阀点的调整记录，通过 \verb|project_id| 与项目基础信息表建立逻辑关联，保留项目交付计划的变更过程。
-	
-	
+		
 	\item 
 	缺陷管理主要用于对缺陷数据进行汇总分析，提供健康度展示的质量看板。
 	\begin{figure}[htbp]

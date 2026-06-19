@@ -1,0 +1,86 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="重大问题流程图" id="major-issue-flow">
+    <mxGraphModel dx="1200" dy="500" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="300" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- 开始 -->
+        <mxCell id="start" value="开始" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="10" y="110" width="90" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- 新增重大问题 -->
+        <mxCell id="add" value="新增重大问题" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="150" y="105" width="130" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- 负责人处理 -->
+        <mxCell id="handle" value="负责人处理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="330" y="105" width="130" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- 是否上升 -->
+        <mxCell id="judge" value="是否上升" style="rhombus;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="520" y="90" width="100" height="90" as="geometry"/>
+        </mxCell>
+
+        <!-- 申请关闭 -->
+        <mxCell id="applyClose" value="申请关闭" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="680" y="105" width="120" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- 项目经理关闭确认 -->
+        <mxCell id="pmConfirm" value="项目经理关闭确认" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="850" y="105" width="150" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- 结束 -->
+        <mxCell id="end" value="结束" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="110" width="90" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- 开始 -> 新增重大问题 -->
+        <mxCell id="e1" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;" edge="1" parent="1" source="start" target="add">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 新增重大问题 -> 负责人处理 -->
+        <mxCell id="e2" value="发送通知" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=12;" edge="1" parent="1" source="add" target="handle">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 负责人处理 -> 是否上升 -->
+        <mxCell id="e3" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;" edge="1" parent="1" source="handle" target="judge">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 是否上升 --否--> 申请关闭 -->
+        <mxCell id="e4" value="否" style="endArrow=block;html=1;rounded=0;strokeWidth=2;fontSize=12;" edge="1" parent="1" source="judge" target="applyClose">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 申请关闭 -> 项目经理关闭确认 -->
+        <mxCell id="e5" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;" edge="1" parent="1" source="applyClose" target="pmConfirm">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 项目经理关闭确认 -> 结束 -->
+        <mxCell id="e6" value="" style="endArrow=block;html=1;rounded=0;strokeWidth=2;" edge="1" parent="1" source="pmConfirm" target="end">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- 是否上升 --是--> 返回负责人处理 -->
+        <mxCell id="e7" value="是" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;strokeWidth=2;fontSize=12;" edge="1" parent="1" source="judge" target="handle">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="15"/>
+              <mxPoint x="395" y="15"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

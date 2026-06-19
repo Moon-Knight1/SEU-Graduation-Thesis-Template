@@ -5,7 +5,12 @@
 \usepackage{enumitem}
 \usepackage{xcolor}
 \usepackage{listings}
-\usepackage[ruled,linesnumbered]{algorithm2e}
+\usepackage[ruled,linesnumbered,algochapter]{algorithm2e}
+% ---- 算法样式（seuthesis.cls 模板风格） ----
+\SetAlgorithmName{算法}{算法}{算法列表}
+\SetAlCapFnt{\songti\seuwuhao}
+\SetAlCapNameFnt{\songti\seuwuhao}
+\AtBeginEnvironment{algorithm}{\songti\seuwuhao\selectfont}
 \setlist[enumerate,1]{label=(\arabic*)}
 
 % 定制 SQL 代码样式
@@ -54,16 +59,17 @@
   ai_used                        = yes,
   ai_checkbox_style              = checkedbox,
   signature_student_image        = {imgs/gaochenjian.png},
-  signature_teacher_image        = {},
+  signature_teacher_image        = {imgs/liaoli.png},
   ai_student_date                = {\today},
   ai_teacher_date                = {\today},
-  ai_teacher_comment             = {}
+  ai_teacher_comment             = {经审阅，学生已如实说明人工智能工具在论文写作过程中的使用情况。相关内容均在本人理解和分析的基础上进行了必要的修改、补充与完善，未发现违反学术规范的情形，故同意上述说明。
+  }
 }
 %面向企业级场景的汽车数字化运营平台的升级开发
 
 \seuaiitem{
   tool_version = {DeepSeek-V4},
-  process = {在使用PlantUML,Mermaid等网站画图时，辅助生成网站语法的代码，图的结构和内容有本人设计修改},
+  process = {在使用PlantUML,Mermaid等网站画图时，辅助生成网站语法的代码，图的结构和内容由本人设计修改},
   pages   = {第三章 3.2（P10）、第五章 5.1（P20）}
 }
 

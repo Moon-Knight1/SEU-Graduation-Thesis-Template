@@ -462,7 +462,7 @@ git config https.proxy https://127.0.0.1:7897
 
 ```git
 git add .
-git commit -m "提交描述"
+git commit -m "Init"
 git push origin main
 ```
 
@@ -472,3 +472,5 @@ git push origin main
 set HTTP_PROXY=http://127.0.0.1:7897
 set HTTPS_PROXY=http://127.0.0.1:7897
 ```
+
+
